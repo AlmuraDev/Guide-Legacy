@@ -8,8 +8,8 @@ branches:
     - master
 
 # Prepare the workspace for a CI build and then run the build
-install: gradle setupCIWorkspace
-script: gradle build
+install: ./gradlew setupCIWorkspace
+script: ./gradlew build
 
 # Perform steps after compilation/test success
 after_success:
