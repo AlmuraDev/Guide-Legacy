@@ -23,39 +23,83 @@
  */
 package com.almuradev.guide.content;
 
-import com.almuradev.guide.server.network.play.S00PageInformation;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Date;
 
 public class Page {
-    private final String identifier, name, date, contents;
+    private final String identifier;
+    private Date created, lastModified;
+    private String name, author, lastContributor;
 
-    public Page(String identifier, String name, String date, String contents) {
+    public Page(String identifier, String name, Date created, String author, Date lastModified, String lastContributor) {
         this.identifier = identifier;
         this.name = name;
-        this.date = date;
-        this.contents = contents;
+        this.created = created;
+        this.author = author;
+        this.lastModified = lastModified;
+        this.lastContributor = lastContributor;
     }
 
     public String getIdentifier() {
         return identifier;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    protected void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    protected void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getDate() {
-        return date;
+    protected void setName(String name) {
+        this.name = name;
     }
 
-    public String getContents() {
-        return contents;
+    public String getAuthor() {
+        return author;
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void handlePageInformation(S00PageInformation packet) {
-        //TODO Update a Page or create a new one.
-        return;
+    protected void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getLastContributor() {
+        return lastContributor;
+    }
+
+    protected void setLastContributor(String lastContributor) {
+        this.lastContributor = lastContributor;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Page page = (Page) o;
+
+        return identifier.equals(page.identifier);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return identifier.hashCode();
     }
 }

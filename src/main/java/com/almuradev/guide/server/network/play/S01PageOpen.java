@@ -24,48 +24,28 @@
 package com.almuradev.guide.server.network.play;
 
 import com.almuradev.guide.content.Page;
-import com.almuradev.guide.content.PageHandler;
-import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 
-import java.util.Date;
-
 /**
- * Instructs a client to synchronize a {@link Page}'s information or to store a new one.
+ * Instructs a client to open a {@link Page} immediately.
  */
-public class S00PageInformation implements IMessage, IMessageHandler<S00PageInformation, IMessage> {
-    public String identifier, name, author, lastContributor, contents;
-    public Date created, lastModified;
+public class S01PageOpen implements IMessage, IMessageHandler<S01PageOpen, IMessage> {
 
-    public S00PageInformation() {}
+    @Override
+    public void fromBytes(ByteBuf byteBuf) {
 
-    public S00PageInformation(String identifier, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
-        this.identifier = identifier;
-        this.name = name;
-        this.created = created;
-        this.author = author;
-        this.lastModified = lastModified;
-        this.lastContributor = lastContributor;
-        this.contents = contents;
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void toBytes(ByteBuf byteBuf) {
+
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
-    }
-
-    @Override
-    public IMessage onMessage(S00PageInformation message, MessageContext ctx) {
-        if (ctx.side.isClient()) {
-            PageHandler.handlePageInformation(message);
-        }
-
+    public IMessage onMessage(S01PageOpen s01PageOpen, MessageContext messageContext) {
         return null;
     }
 }

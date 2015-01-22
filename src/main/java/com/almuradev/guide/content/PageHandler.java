@@ -21,40 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.almuradev.guide;
+package com.almuradev.guide.content;
 
+import com.almuradev.guide.server.network.play.S00PageInformation;
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Date;
+import java.util.Map;
 
-@SideOnly(Side.SERVER)
-public class Filesystem {
-    public static final Path PATH_CONFIG = Paths.get("config" + File.separator + Guide.MOD_ID);
-    public static final Path PATH_PAGES = Paths.get(PATH_CONFIG.toString(), "pages");
+public class PageHandler {
+    private static final Map<String, Page> PAGES = Maps.newHashMap();
 
-    public static DirectoryStream.Filter<Path> FILTER_YML_FILES_ONLY = new DirectoryStream.Filter<Path>() {
-        @Override
-        public boolean accept(Path entry) throws IOException {
-            return !Files.isDirectory(entry) && (entry.getFileName().toString().endsWith(".yml"));
-        }
-    };
-
-    static {
-        if (Files.notExists(PATH_PAGES)) {
-            try {
-                Files.createDirectories(PATH_CONFIG);
-
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to create pages directory!", e);
-            }
-        }
+    public static Optional<Page> getPage(String identifier) {
+        return Optional.absent();
     }
 
-    private Filesystem() {}
+    public static Page createPage(String identifier, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
+        return null;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void handlePageInformation(S00PageInformation packet) {
+        Page page = PAGES.get(packet.identifier);
+    }
 }
