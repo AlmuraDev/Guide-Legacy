@@ -23,6 +23,7 @@
  */
 package com.almuradev.guide.server.network.play;
 
+import com.almuradev.guide.client.network.play.C00PageInformation;
 import com.almuradev.guide.content.Page;
 import com.almuradev.guide.content.PageRegistry;
 import cpw.mods.fml.common.network.ByteBufUtils;
@@ -34,15 +35,23 @@ import io.netty.buffer.ByteBuf;
 import java.util.Date;
 
 /**
- * Instructs a client to synchronize a {@link Page}'s information or to store a new one.
+ * Sent to the client as a response to {@link C00PageInformation}.
+ *
+ * Packet payload is as follows:
+ *
+ * - 1 byte indicating if the server accepted the change or not
+ * - (If server rejected the change) Full data of the page
  */
-public class S00PageInformation implements IMessage, IMessageHandler<S00PageInformation, IMessage> {
+public class S01PageInformationResponse implements IMessage, IMessageHandler<S01PageInformationResponse, IMessage> {
+    public boolean accepted = true;
     public String identifier, name, author, lastContributor, contents;
     public Date created, lastModified;
 
-    public S00PageInformation() {}
+    public S01PageInformationResponse() {
+    }
 
-    public S00PageInformation(String identifier, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
+    public S01PageInformationResponse(String identifier, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
+        accepted = false;
         this.identifier = identifier;
         this.name = name;
         this.created = created;
@@ -52,36 +61,42 @@ public class S00PageInformation implements IMessage, IMessageHandler<S00PageInfo
         this.contents = contents;
     }
 
-    public S00PageInformation(Page page) {
+    public S01PageInformationResponse(Page page) {
         this(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(), page.getLastContributor(), page.getContents());
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        identifier = ByteBufUtils.readUTF8String(buf);
-        name = ByteBufUtils.readUTF8String(buf);
-        created = new Date(buf.readLong());
-        author = ByteBufUtils.readUTF8String(buf);
-        lastModified = new Date(buf.readLong());
-        lastContributor = ByteBufUtils.readUTF8String(buf);
-        contents = ByteBufUtils.readUTF8String(buf);
+        accepted = buf.readBoolean();
+        if (!accepted) {
+            identifier = ByteBufUtils.readUTF8String(buf);
+            name = ByteBufUtils.readUTF8String(buf);
+            created = new Date(buf.readLong());
+            author = ByteBufUtils.readUTF8String(buf);
+            lastModified = new Date(buf.readLong());
+            lastContributor = ByteBufUtils.readUTF8String(buf);
+            contents = ByteBufUtils.readUTF8String(buf);
+        }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeUTF8String(buf, identifier);
-        ByteBufUtils.writeUTF8String(buf, name);
-        buf.writeLong(created.getTime());
-        ByteBufUtils.writeUTF8String(buf, author);
-        buf.writeLong(lastModified.getTime());
-        ByteBufUtils.writeUTF8String(buf, lastContributor);
-        ByteBufUtils.writeUTF8String(buf, contents);
+        buf.writeBoolean(accepted);
+        if (!accepted) {
+            ByteBufUtils.writeUTF8String(buf, identifier);
+            ByteBufUtils.writeUTF8String(buf, name);
+            buf.writeLong(created.getTime());
+            ByteBufUtils.writeUTF8String(buf, author);
+            buf.writeLong(lastModified.getTime());
+            ByteBufUtils.writeUTF8String(buf, lastContributor);
+            ByteBufUtils.writeUTF8String(buf, contents);
+        }
     }
 
     @Override
-    public IMessage onMessage(S00PageInformation message, MessageContext ctx) {
+    public IMessage onMessage(S01PageInformationResponse message, MessageContext ctx) {
         if (ctx.side.isClient()) {
-            PageRegistry.handlePageInformation(message);
+            PageRegistry.handlePageInformationResponse(message);
         }
 
         return null;

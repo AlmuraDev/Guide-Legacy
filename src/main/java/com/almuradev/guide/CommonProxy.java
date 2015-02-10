@@ -23,12 +23,27 @@
  */
 package com.almuradev.guide;
 
+import com.almuradev.guide.client.network.play.C00PageInformation;
+import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.server.network.play.S00PageInformation;
+import com.almuradev.guide.server.network.play.S01PageInformationResponse;
+import com.almuradev.guide.server.network.play.S02PageOpen;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 
 public class CommonProxy {
     public void onPreInitializationEvent(FMLPreInitializationEvent event) {
         Guide.NETWORK_FORGE.registerMessage(S00PageInformation.class, S00PageInformation.class, 0, Side.CLIENT);
+        Guide.NETWORK_FORGE.registerMessage(S01PageInformationResponse.class, S01PageInformationResponse.class, 1, Side.CLIENT);
+        Guide.NETWORK_FORGE.registerMessage(S02PageOpen.class, S02PageOpen.class, 2, Side.CLIENT);
+        Guide.NETWORK_FORGE.registerMessage(C00PageInformation.class, C00PageInformation.class, 0, Side.SERVER);
+    }
+
+    public void onServerStartingEvent(FMLServerStartingEvent event) {
+        PageRegistry.clearPages();
+        Filesystem.loadPages(Filesystem.PATH_PAGES, Filesystem.FILTER_YML_FILES_ONLY);
+        System.out.println(PageRegistry.getAll());
     }
 }

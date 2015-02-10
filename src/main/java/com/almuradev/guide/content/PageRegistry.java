@@ -23,28 +23,63 @@
  */
 package com.almuradev.guide.content;
 
+import com.almuradev.guide.client.network.play.C00PageInformation;
 import com.almuradev.guide.server.network.play.S00PageInformation;
+import com.almuradev.guide.server.network.play.S01PageInformationResponse;
+import com.almuradev.guide.server.network.play.S02PageOpen;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import java.util.Date;
+import java.util.Collections;
 import java.util.Map;
 
-public class PageHandler {
+public class PageRegistry {
     private static final Map<String, Page> PAGES = Maps.newHashMap();
 
     public static Optional<Page> getPage(String identifier) {
-        return Optional.absent();
+        return Optional.fromNullable(PAGES.get(identifier));
     }
 
-    public static Page createPage(String identifier, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
-        return null;
+    public static Page putPage(Page page) {
+        return PAGES.put(page.getIdentifier(), page);
+    }
+
+    public static Map<String, Page> getAll() {
+        return Collections.unmodifiableMap(PAGES);
+    }
+
+    public static void clearPages() {
+        PAGES.clear();
     }
 
     @SideOnly(Side.CLIENT)
     public static void handlePageInformation(S00PageInformation packet) {
         Page page = PAGES.get(packet.identifier);
+
+        if (page == null) {
+            page = new Page(packet.identifier, packet.name, packet.created, packet.author, packet.lastModified, packet.lastContributor, packet.contents);
+            PAGES.put(packet.identifier, page);
+        } else {
+            page
+                    .setCreated(packet.created)
+                    .setAuthor(packet.author)
+                    .setLastModified(packet.lastModified)
+                    .setLastContributor(packet.lastContributor)
+                    .setContents(packet.contents);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void handlePageInformationResponse(S01PageInformationResponse packet) {
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void handlePageOpen(S02PageOpen packet) {}
+
+    @SideOnly(Side.SERVER)
+    public static S01PageInformationResponse handlePageInformation(C00PageInformation packet) {
+        return null;
     }
 }

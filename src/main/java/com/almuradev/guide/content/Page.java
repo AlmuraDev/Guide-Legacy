@@ -25,18 +25,19 @@ package com.almuradev.guide.content;
 
 import java.util.Date;
 
-public class Page {
+public final class Page {
     private final String identifier;
     private Date created, lastModified;
-    private String name, author, lastContributor;
+    private String name, author, lastContributor, contents;
 
-    public Page(String identifier, String name, Date created, String author, Date lastModified, String lastContributor) {
+    public Page(String identifier, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
         this.identifier = identifier;
         this.name = name;
         this.created = created;
         this.author = author;
         this.lastModified = lastModified;
         this.lastContributor = lastContributor;
+        this.contents = contents;
     }
 
     public String getIdentifier() {
@@ -47,59 +48,76 @@ public class Page {
         return created;
     }
 
-    protected void setCreated(Date created) {
+    protected Page setCreated(Date created) {
         this.created = created;
+        return this;
     }
 
     public Date getLastModified() {
         return lastModified;
     }
 
-    protected void setLastModified(Date lastModified) {
+    protected Page setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    protected void setName(String name) {
+    protected Page setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    protected void setAuthor(String author) {
+    protected Page setAuthor(String author) {
         this.author = author;
+        return this;
     }
 
     public String getLastContributor() {
         return lastContributor;
     }
 
-    protected void setLastContributor(String lastContributor) {
+    protected Page setLastContributor(String lastContributor) {
         this.lastContributor = lastContributor;
+        return this;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    protected Page setContents(String contents) {
+        this.contents = contents;
+        return this;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Page page = (Page) o;
-
-        return identifier.equals(page.identifier);
-
+        return this == o || !(o == null || getClass() != o.getClass()) && identifier.equals(((Page) o).identifier);
     }
 
     @Override
     public int hashCode() {
         return identifier.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Page { " +
+               "identifier= [" + identifier + "]" +
+               ", created= [" + created + "]" +
+               ", lastModified= [" + lastModified + "]" +
+               ", name= [" + name + "]" +
+               ", author= [" + author + "]" +
+               ", lastContributor= [" + lastContributor + "]" +
+               ", contents= [" + contents + "]" +
+               " }";
     }
 }

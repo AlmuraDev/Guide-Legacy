@@ -21,31 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.almuradev.guide.server.network.play;
+package com.almuradev.guide.client.network.play;
 
-import com.almuradev.guide.content.Page;
+import com.almuradev.guide.content.PageRegistry;
+import com.almuradev.guide.server.network.play.S01PageInformationResponse;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 
-/**
- * Instructs a client to open a {@link Page} immediately.
- */
-public class S01PageOpen implements IMessage, IMessageHandler<S01PageOpen, IMessage> {
+import java.util.Date;
 
-    @Override
-    public void fromBytes(ByteBuf byteBuf) {
+public class C00PageInformation implements IMessage, IMessageHandler<C00PageInformation, S01PageInformationResponse> {
+    public String identifier, name, author, lastContributor, contents;
+    public Date created, lastModified;
 
+    public C00PageInformation() {}
+
+    public C00PageInformation(String identifier, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
+        this.identifier = identifier;
+        this.name = name;
+        this.created = created;
+        this.author = author;
+        this.lastModified = lastModified;
+        this.lastContributor = lastContributor;
+        this.contents = contents;
     }
 
     @Override
-    public void toBytes(ByteBuf byteBuf) {
-
+    public void fromBytes(ByteBuf buf) {
     }
 
     @Override
-    public IMessage onMessage(S01PageOpen s01PageOpen, MessageContext messageContext) {
+    public void toBytes(ByteBuf buf) {
+    }
+
+    @Override
+    public S01PageInformationResponse onMessage(C00PageInformation message, MessageContext ctx) {
+        if (ctx.side.isServer()) {
+            return PageRegistry.handlePageInformation(message);
+        }
+
         return null;
     }
 }

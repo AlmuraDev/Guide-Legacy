@@ -38,8 +38,7 @@ repositories {
 // Project dependencies
 dependencies {
     compile 'net.malisis:malisiscore:1.7.10-0.10.6-SNAPSHOT:dev'
-    compile 'ninja.leaping.configurate:configurate-core:0.2-SNAPSHOT'
-    compile 'ninja.leaping.configurate:configurate-yaml:0.2-SNAPSHOT'
+    compile 'ninja.leaping.configurate:configurate-yaml:0.2'
 }
 
 // Gradle default tasks

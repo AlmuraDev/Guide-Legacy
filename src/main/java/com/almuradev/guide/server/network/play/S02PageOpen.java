@@ -21,34 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.almuradev.guide;
+package com.almuradev.guide.server.network.play;
 
-import com.almuradev.guide.client.ClientProxy;
-import com.almuradev.guide.server.ServerProxy;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.almuradev.guide.content.Page;
+import com.almuradev.guide.content.PageRegistry;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import io.netty.buffer.ByteBuf;
 
-@Mod(modid = Guide.MOD_ID)
-public class Guide {
-    public static final String MOD_ID = "guide";
-    public static final Logger LOGGER = LogManager.getLogger(Guide.MOD_ID);
-    public static final SimpleNetworkWrapper NETWORK_FORGE = new SimpleNetworkWrapper("GE|FOR");
+/**
+ * Instructs a client to open a {@link Page} immediately.
+ */
+public class S02PageOpen implements IMessage, IMessageHandler<S02PageOpen, IMessage> {
+    public String identifier;
 
-    @SidedProxy(clientSide = ClientProxy.CLASSPATH, serverSide = ServerProxy.CLASSPATH)
-    public static CommonProxy PROXY;
+    public S02PageOpen() {}
 
-    @Mod.EventHandler
-    public void onPreInitializationEvent(FMLPreInitializationEvent event) {
-        PROXY.onPreInitializationEvent(event);
+    public S02PageOpen(String identifer) {
+        this.identifier = identifer;
     }
 
-    @Mod.EventHandler
-    public void onServerStarting(FMLServerStartingEvent event) {
-        PROXY.onServerStartingEvent(event);
+    @Override
+    public void fromBytes(ByteBuf buf) {
+
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf) {
+
+    }
+
+    @Override
+    public IMessage onMessage(S02PageOpen message, MessageContext ctx) {
+        if (ctx.side.isClient()) {
+            PageRegistry.handlePageOpen(message);
+        }
+
+        return null;
     }
 }
