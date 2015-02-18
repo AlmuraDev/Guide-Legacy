@@ -1,0 +1,3 @@
+[submodule "AlmuraSDK"]
+	path = AlmuraSDK
+	url = https://github.com/AlmuraDev/AlmuraSDK.git

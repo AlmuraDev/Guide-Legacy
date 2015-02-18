@@ -25,6 +25,9 @@ plugins {
 
 apply plugin: "forge"
 
+// Depends on subprojects
+evaluationDependsOn('AlmuraSDK')
+
 // Project repositories
 repositories {
     mavenLocal()
@@ -37,7 +40,7 @@ repositories {
 
 // Project dependencies
 dependencies {
-    compile 'net.malisis:malisiscore:1.7.10-0.10.6-SNAPSHOT:dev'
+    compile project('AlmuraSDK')
     compile 'ninja.leaping.configurate:configurate-yaml:0.2'
 }
 
