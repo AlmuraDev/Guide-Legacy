@@ -25,9 +25,6 @@ plugins {
 
 apply plugin: "forge"
 
-// Depends on subprojects
-evaluationDependsOn('AlmuraSDK')
-
 // Project repositories
 repositories {
     mavenLocal()
@@ -40,7 +37,7 @@ repositories {
 
 // Project dependencies
 dependencies {
-    compile project('AlmuraSDK')
+    compile 'com.almuradev:almurasdk:1.7.10-1277'
     compile 'ninja.leaping.configurate:configurate-yaml:0.2'
 }
 
@@ -54,8 +51,7 @@ archivesBaseName = 'guide'
 // Version information
 ext.minecraftVersion = '1.7.10'
 ext.forgeVersion = '10.13.2.1277'
-ext.projectVersion = '0.1.0'
-version = minecraftVersion.substring(0, 3) + '-' + forgeVersion.substring(forgeVersion.size() - 4) + '-' + projectVersion
+version = minecraftVersion.substring(0, 3) + '-' + forgeVersion.substring(forgeVersion.size() - 4)
 
 // Extended project information
 ext.projectName = 'Guide'
