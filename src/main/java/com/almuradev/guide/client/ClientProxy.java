@@ -24,7 +24,29 @@
 package com.almuradev.guide.client;
 
 import com.almuradev.guide.CommonProxy;
+import com.almuradev.guide.client.gui.GuideGui;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.InputEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.common.MinecraftForge;
+import org.lwjgl.input.Keyboard;
 
 public class ClientProxy extends CommonProxy {
     public static final String CLASSPATH = "com.almuradev.guide.client.ClientProxy";
+
+    @SubscribeEvent
+    public void onKeyPress(InputEvent.KeyInputEvent event) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_G)) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuideGui(null));
+        }
+    }
+
+    @Override
+    public void onPreInitializationEvent(FMLPreInitializationEvent event) {
+        super.onPreInitializationEvent(event);
+        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 }
