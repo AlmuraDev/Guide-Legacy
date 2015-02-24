@@ -1,122 +1,129 @@
-// Gradle plugins
 buildscript {
     repositories {
         mavenCentral()
         maven {
-            name = 'sonatype-nexus-public'
-            url = 'https://oss.sonatype.org/content/repositories/public/'
-        }
-        maven {
             name = 'forge-repo'
             url = 'http://files.minecraftforge.net/maven/'
         }
+        maven {
+            name = 'sonatype-nexus'
+            url = 'https://oss.sonatype.org/content/repositories/public/'
+        }
+        jcenter()
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
     }
 }
 
-plugins {
-    id "com.github.hierynomus.license" version "0.11.0"
-    id "java"
-    id "maven"
-    id "signing"
-}
+defaultTasks 'licenseFormat', 'build'
 
-apply plugin: "forge"
+apply plugin: 'forge'
+apply plugin: 'license'
+apply plugin: 'maven'
 
-// Project repositories
+group = 'com.almuradev'
+archivesBaseName = 'guide'
+
+ext.minecraftVersion = '1.7.10'
+ext.forgeVersion = '10.13.2.1291'
+version = minecraftVersion + '-' + forgeVersion.substring(forgeVersion.size() - 4) + '-SNAPSHOT'
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
 repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        name = 'oss-sonatype'
+        name = 'sonatype-nexus'
         url = 'https://oss.sonatype.org/content/repositories/public/'
+    }
+    maven {
+        name = 'sponge-public'
+        url = 'http://repo.spongepowered.org/maven/'
     }
 }
 
-// Project dependencies
-dependencies {
-    compile 'com.almuradev:almurasdk:1.7.10-1277:dev'
-    compile 'ninja.leaping.configurate:configurate-yaml:0.2'
-}
-
-// Gradle default tasks
-defaultTasks 'licenseFormat', 'build'
-
-// Basic project information
-group = 'com.almuradev'
-archivesBaseName = 'guide'
-
-// Version information
-ext.minecraftVersion = '1.7.10'
-ext.forgeVersion = '10.13.2.1277'
-version = minecraftVersion.substring(0, 3) + '-' + forgeVersion.substring(forgeVersion.size() - 4)
-
-// Extended project information
-ext.projectName = 'Guide'
-ext.inceptionYear = '2015'
-ext.packaging = 'jar'
-ext.url = 'http://github.com/AlmuraDev'
-ext.description = 'Le Foo, Le Bar'
-ext.organization = 'AlmuraDev'
-
-// Java version target/property compatibility
-sourceCompatibility = '1.7'
-targetCompatibility = '1.7'
-
-// MinecraftForge version
 minecraft {
     version = project.ext.minecraftVersion + '-' + project.ext.forgeVersion
     runDir = "run/"
 }
 
-// Configuration settings
 configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds' // Always check for new snapshots
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
-// Filter, process, and include resources
-processResources {
-    // Include in final JAR
-    from 'LICENSE.txt'
+dependencies {
+    compile 'com.almuradev:almurasdk:1.7.10-1291-SNAPSHOT'
+}
 
-    // Replace variables
-    from('src/main/resources/mcmod.info') {
-        expand 'modid': projectName.toLowerCase(),
-               'name': projectName,
-               'description': project.ext.description,
-               'version': version,
-               'mcversion': minecraft.version,
-               'url': url,
-               'authorList': organization
+processResources {
+    inputs.property "version", version
+    inputs.property "mcversion", project.minecraft.version
+
+    from 'LICENSE.txt'
+}
+
+license {
+    ext.name = project.name
+    ext.organization = project.organization
+    ext.url = project.url
+    ext.year = project.inceptionYear
+    sourceSets = project.sourceSets
+    header file('HEADER.txt')
+    ignoreFailures false
+    strictCheck true
+    includes (["**/*.java"])
+    mapping {
+        java = 'SLASHSTAR_STYLE'
     }
 }
 
-// Source compiler configuration
-tasks.withType(JavaCompile) {
-    options.compilerArgs += [ '-Xlint:all', '-Xlint:-path', '-Xlint:-processing' ]
+compileJava {
+    options.compilerArgs += [
+            '-Xlint:all',
+            '-Xlint:-path',
+            '-Xlint:-processing'
+    ]
     options.deprecation = true
     options.encoding = 'utf8'
 }
 
-// License header formatting
-license {
-    ext.name = project.name
-    ext.organization = organization
-    ext.url = url
-    ext.year = inceptionYear
-    header rootProject.file('HEADER.txt')
-    ignoreFailures true
-    strictCheck true
-    includes(["**/*.java"])
-}
-
-// JAR manifest configuration
-jar.manifest.mainAttributes(
+def manifestEntries = [
         "Built-By": System.properties['user.name'],
         "Created-By": System.properties['java.vm.version'] + " (" + System.properties['java.vm.vendor'] + ")",
         "Implementation-Title": name,
         "Implementation-Version": version,
-        "Implementation-Vendor": url,
-)
+        "Implementation-Vendor": url
+]
+
+jar {
+    manifest.mainAttributes(manifestEntries)
+
+    classifier = 'release'
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
+
+task sourceJar(type: Jar, dependsOn: sourceMainJava) {
+    from "build/sources/java"
+    from "build/resources/main/java"
+    classifier = "sources"
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier = "javadoc"
+}
+
+artifacts {
+    archives sourceJar
+    archives javadocJar
+}

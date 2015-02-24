@@ -25,29 +25,70 @@ package com.almuradev.guide.client.gui;
 
 import com.almuradev.almurasdk.client.gui.SimpleGui;
 import com.almuradev.almurasdk.client.gui.components.UIForm;
-import net.malisis.core.client.gui.component.interaction.UIButton;
+import com.almuradev.guide.content.Page;
+import com.almuradev.guide.content.PageRegistry;
+import com.google.common.collect.Maps;
+import com.google.common.eventbus.Subscribe;
+import net.malisis.core.client.gui.Anchor;
 import net.malisis.core.client.gui.component.interaction.UISelect;
 import net.malisis.core.client.gui.component.interaction.UITextField;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GuideGui extends SimpleGui {
-    private UIButton saveButton, closeButton;
-    private UITextField contentField;
-    private UISelect guideSelection;
+    private UITextField utfContents;
 
     public GuideGui(SimpleGui gui) {
         super(gui);
+        buildGui();
     }
 
     @Override
-    protected void setup() {
-        final UIForm form = new UIForm(this, 200, 350, "Guide");
+    protected void buildGui() {
+        guiscreenBackground = false;
 
-        saveButton = new UIButton(this, "Save");
-        saveButton.setName("button.save");
+        final UIForm frmGuide = new UIForm(this, 450, 250, "Guide");
+        frmGuide.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
+        frmGuide.setName("form.guide");
 
-        closeButton = new UIButton(this, "Close");
-        closeButton.setName("button.close");
+        final UISelect uisPage = new UISelect(this, 100, populate());
+        uisPage.setAnchor(Anchor.TOP | Anchor.RIGHT);
+        uisPage.setPosition(-5, 5);
+        uisPage.setName("form.guide.select.page");
+        uisPage.setDrawShadow(false);
+        uisPage.register(this);
+        frmGuide.getContentContainer().add(uisPage);
 
-        addToScreen(form);
+        utfContents = new UITextField(this, true);
+        utfContents.setPosition(5, 20);
+        utfContents.setSize(440, 200);
+        utfContents.setName("form.guide.textfield.contents");
+        utfContents.setDrawShadow(false);
+        frmGuide.getContentContainer().add(utfContents);
+
+        addToScreen(frmGuide);
+    }
+
+    @Subscribe
+    public void onUISelectEvent(UISelect.SelectEvent event) {
+        if (event.getComponent().getName().equalsIgnoreCase("form.guide.select.page")) {
+            // TODO Grinch, you broke this you fix this.
+            ((UIForm) event.getComponent().getParent().getParent()).setTitle("Guide - " + event.getOption().getLabel());
+
+            utfContents.setText(((Page) event.getOption().getKey()).getContents());
+        }
+    }
+
+    public Map<Integer, UISelect.Option> populate() {
+        final HashMap<Integer, UISelect.Option> options = Maps.newHashMap();
+
+        int count = 0;
+        for (Map.Entry<String, Page> entry : PageRegistry.getAll().entrySet()) {
+            options.put(count, new UISelect.Option<>(count, entry.getValue(), entry.getValue().getName()));
+            count++;
+        }
+
+        return options;
     }
 }

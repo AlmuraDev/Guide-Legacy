@@ -26,29 +26,36 @@ package com.almuradev.guide;
 import com.almuradev.guide.client.ClientProxy;
 import com.almuradev.guide.server.ServerProxy;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Guide.MOD_ID)
+@Mod(modid = Guide.MOD_ID, name = "Guide", version = "1.7.10-1291")
 public class Guide {
     public static final String MOD_ID = "guide";
-    public static final Logger LOGGER = LogManager.getLogger(Guide.MOD_ID);
+    public static final Logger LOGGER = LogManager.getLogger(Guide.class);
     public static final SimpleNetworkWrapper NETWORK_FORGE = new SimpleNetworkWrapper("GE|FOR");
 
     @SidedProxy(clientSide = ClientProxy.CLASSPATH, serverSide = ServerProxy.CLASSPATH)
     public static CommonProxy PROXY;
 
-    @Mod.EventHandler
+    @EventHandler
     public void onPreInitializationEvent(FMLPreInitializationEvent event) {
         PROXY.onPreInitializationEvent(event);
     }
 
-    @Mod.EventHandler
-    public void onServerStarting(FMLServerStartingEvent event) {
+    @EventHandler
+    public void onInitializationEvent(FMLInitializationEvent event) {
+        PROXY.onInitialization(event);
+    }
+
+    @EventHandler
+    public void onServerStartingEvent(FMLServerStartingEvent event) {
         PROXY.onServerStartingEvent(event);
     }
 }
