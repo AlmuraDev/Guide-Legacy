@@ -26,6 +26,7 @@ package com.almuradev.guide.client.gui;
 
 import com.almuradev.almurasdk.client.gui.SimpleGui;
 import com.almuradev.almurasdk.client.gui.components.UIForm;
+import com.almuradev.almurasdk.util.Color;
 import com.almuradev.guide.content.Page;
 import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.content.PageUtil;
@@ -41,6 +42,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GuideGui extends SimpleGui {
+    public static final Color CONTROL = new Color(13158600);
+    public static final Color GRAY_DARK_BLUE_MIX = new Color(459343);
+
     private UISelect usPage;
     private UITextField utfContents;
 
@@ -55,7 +59,7 @@ public class GuideGui extends SimpleGui {
         final UIForm frmGuide = new UIForm(this, 450, 275, "Guide");
         frmGuide.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
         frmGuide.setName("form.guide");
-        frmGuide.setColor(13158600);
+        frmGuide.setColor(CONTROL.getGuiColorCode());
         frmGuide.setBackgroundAlpha(255);
 
         usPage = new UISelect(this, 140, populate());
@@ -70,7 +74,8 @@ public class GuideGui extends SimpleGui {
         utfContents.setPosition(5, 20);
         utfContents.setSize(440, 215);
         utfContents.setName("form.guide.textfield.contents");
-        utfContents.setColors(utfContents.getTextColor(), 459343, 13158600, usPage.getSelectTextColor(), false);
+        utfContents.setColors(utfContents.getTextColor(), GRAY_DARK_BLUE_MIX.getGuiColorCode(), CONTROL.getGuiColorCode(), usPage.getSelectTextColor(), false);
+        utfContents.getScrollbar().setAutoHide(true);
         frmGuide.getContentContainer().add(utfContents);
 
         final UIButton ubtnClose = new UIButton(this, "Close");
