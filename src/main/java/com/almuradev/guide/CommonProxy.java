@@ -23,14 +23,11 @@
  */
 package com.almuradev.guide;
 
-import com.almuradev.almurasdk.FileSystem;
 import com.almuradev.guide.client.network.play.C00PageInformation;
-import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.content.PageUtil;
 import com.almuradev.guide.server.network.play.S00PageInformation;
 import com.almuradev.guide.server.network.play.S01PageInformationResponse;
 import com.almuradev.guide.server.network.play.S02PageOpen;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
@@ -48,8 +45,6 @@ public class CommonProxy {
     }
 
     public void onServerStartingEvent(FMLServerStartingEvent event) {
-        PageRegistry.clearPages();
-        PageUtil.loadPages(PageUtil.PATH_PAGES, FileSystem.FILTER_YAML_FILES_ONLY);
-        System.out.println(PageRegistry.getAll());
+        PageUtil.loadAll();
     }
 }

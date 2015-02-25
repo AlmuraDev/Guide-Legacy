@@ -1,5 +1,6 @@
 package com.almuradev.guide.content;
 
+import com.almuradev.almurasdk.FileSystem;
 import com.almuradev.guide.Guide;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
@@ -28,6 +29,12 @@ public class PageUtil {
                 throw new RuntimeException("Failed to create pages directory!", e);
             }
         }
+    }
+
+    public static void loadAll() {
+        PageRegistry.clearPages();
+        PageUtil.loadPages(PageUtil.PATH_PAGES, FileSystem.FILTER_YAML_FILES_ONLY);
+        Guide.LOGGER.info("Loaded [" + PageRegistry.getAll().size() + "] page(s).");
     }
 
     public static void loadPages(Path path, DirectoryStream.Filter<Path> filter) {
