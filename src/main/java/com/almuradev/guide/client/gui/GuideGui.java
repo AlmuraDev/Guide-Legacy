@@ -52,7 +52,7 @@ public class GuideGui extends SimpleGui {
     protected void buildGui() {
         guiscreenBackground = false;
 
-        final UIForm frmGuide = new UIForm(this, 450, 250, Colors.BOLD + "" + Colors.GOLD + "Guide");
+        final UIForm frmGuide = new UIForm(this, 450, 250, "Guide");
         frmGuide.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
         frmGuide.setName("form.guide");
         frmGuide.setColor(13158600);
@@ -84,7 +84,7 @@ public class GuideGui extends SimpleGui {
             return;
         }
         if (event.getComponent().getName().equalsIgnoreCase("form.guide.select.page")) {
-            ((UIForm) event.getComponent().getParent().getParent()).setTitle(Colors.GOLD + "" + Colors.ITALIC + "Guide (" + event.getNewValue().getLabel() + ")");
+            ((UIForm) event.getComponent().getParent().getParent()).setTitle("Guide (" + event.getNewValue().getLabel() + ")");
             utfContents.setText(((Page) event.getNewValue().getKey()).getContents());
         }
     }
