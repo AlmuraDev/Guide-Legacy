@@ -25,11 +25,15 @@
 package com.almuradev.guide.content;
 
 import com.almuradev.almurasdk.FileSystem;
+import com.almuradev.almurasdk.util.Color;
+import com.almuradev.almurasdk.util.Colors;
 import com.almuradev.guide.Guide;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,12 +41,15 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class PageUtil {
     public static final Path PATH_CONFIG = Paths.get("config", Guide.MOD_ID);
     public static final Path PATH_PAGES = Paths.get(PATH_CONFIG.toString(), "pages");
     public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
+    public static final List<Color> COLORS;
 
     static {
         if (Files.notExists(PATH_PAGES)) {
@@ -51,6 +58,19 @@ public class PageUtil {
 
             } catch (Exception e) {
                 throw new RuntimeException("Failed to create pages directory!", e);
+            }
+        }
+
+        COLORS = new ArrayList<>();
+
+        final Field[] declaredFields = Colors.class.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                try {
+                    COLORS.add((Color) field.get(null));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -85,6 +105,26 @@ public class PageUtil {
         final String contents = root.getChild("contents").getString("");
 
         return new Page(identifier, name, created, author, lastModified, lastContributor, contents);
+    }
+
+    /**
+     * Replaces all '§' with the provided char.
+     * @param colorCodeStart The char replacement
+     * @param rawText The text to replace
+     * @return The replaced text
+     */
+    public static String replaceColorCodes(char colorCodeStart, String rawText, boolean toColorsList) {
+        for (Color c : COLORS) {
+            //Replace color map -> char + charcode
+            if (!toColorsList) {
+                rawText = rawText.replaceAll("" + c, colorCodeStart + "" + c.getChatCode());
+            //Replace char + charcode -> color map
+            } else {
+                rawText = rawText.replaceAll(colorCodeStart + "" + c.getChatCode(), "" + c);
+            }
+        }
+
+        return rawText;
     }
 
     private PageUtil() {}

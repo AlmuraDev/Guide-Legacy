@@ -74,7 +74,8 @@ public class GuideGui extends SimpleGui {
         utfContents.setPosition(5, 20);
         utfContents.setSize(440, 215);
         utfContents.setName("form.guide.textfield.contents");
-        utfContents.setColors(utfContents.getTextColor(), GRAY_DARK_BLUE_MIX.getGuiColorCode(), CONTROL.getGuiColorCode(), usPage.getSelectTextColor(), false);
+        utfContents.setColors(utfContents.getTextColor(), GRAY_DARK_BLUE_MIX.getGuiColorCode(), CONTROL.getGuiColorCode(),
+                              usPage.getSelectTextColor(), false);
         utfContents.getScrollbar().setAutoHide(true);
         frmGuide.getContentContainer().add(utfContents);
 
@@ -91,7 +92,6 @@ public class GuideGui extends SimpleGui {
         ubtnSave.setPosition(ubtnClose.getX() - 5 - ubtnClose.getWidth(), ubtnClose.getY());
         ubtnSave.setSize(40, 18);
         ubtnSave.setName("form.guide.button.save");
-        ubtnSave.setDisabled(true);
         ubtnSave.register(this);
         frmGuide.getContentContainer().add(ubtnSave);
 
@@ -128,6 +128,17 @@ public class GuideGui extends SimpleGui {
 
     @Subscribe
     public void onUIButtonClickEvent(UIButton.ClickEvent event) {
+        switch (event.getComponent().getName()) {
+            case "form.guide.button.close":
+                break;
+            case "form.guide.button.save":
+                final String toColorListContents = PageUtil.replaceColorCodes('&', ((Page) usPage.getSelectedOption().getKey()).getContents(), true);
+                System.out.println(toColorListContents);
+                final String fromColorListContents = PageUtil.replaceColorCodes('&', toColorListContents, false);
+                System.out.println(fromColorListContents);
+
+        }
+
         if (event.getComponent().getName().equalsIgnoreCase("form.guide.button.close")) {
             close();
         }
