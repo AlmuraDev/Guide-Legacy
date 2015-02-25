@@ -23,6 +23,8 @@
  */
 package com.almuradev.guide.client;
 
+import com.almuradev.almurasdk.AlmuraSDK;
+import com.almuradev.almurasdk.permissions.Permissions;
 import com.almuradev.guide.CommonProxy;
 import com.almuradev.guide.client.gui.GuideGui;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -35,17 +37,23 @@ import org.lwjgl.input.Keyboard;
 public class ClientProxy extends CommonProxy {
 
     public static final String CLASSPATH = "com.almuradev.guide.client.ClientProxy";
+    public static final ClientPermissible PERMISSIBLE_CLIENT = new ClientPermissible();
 
     @Override
     public void onPreInitializationEvent(FMLPreInitializationEvent event) {
         super.onPreInitializationEvent(event);
+        AlmuraSDK.getPermissionsManager().registerPermissible(PERMISSIBLE_CLIENT);
         FMLCommonHandler.instance().bus().register(this);
     }
 
     @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent event) {
-        if (Keyboard.isKeyDown(Keyboard.KEY_G)) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuideGui(null));
+        if (getPermissions().hasPermission("mod.guide.open") && Keyboard.isKeyDown(Keyboard.KEY_G)) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuideGui());
         }
+    }
+
+    public static Permissions getPermissions() {
+        return AlmuraSDK.getPermissionsManager().getPermissions(PERMISSIBLE_CLIENT);
     }
 }

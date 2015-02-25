@@ -23,6 +23,7 @@
  */
 package com.almuradev.guide;
 
+import com.almuradev.almurasdk.AlmuraSDK;
 import com.almuradev.guide.client.network.play.C00PageInformation;
 import com.almuradev.guide.content.PageUtil;
 import com.almuradev.guide.server.network.play.S00PageInformation;

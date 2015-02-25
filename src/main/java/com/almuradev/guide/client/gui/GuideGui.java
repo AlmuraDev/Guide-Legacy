@@ -25,13 +25,13 @@ package com.almuradev.guide.client.gui;
 
 import com.almuradev.almurasdk.client.gui.SimpleGui;
 import com.almuradev.almurasdk.client.gui.components.UIForm;
-import com.almuradev.almurasdk.util.Colors;
 import com.almuradev.guide.content.Page;
 import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.content.PageUtil;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.Subscribe;
 import net.malisis.core.client.gui.Anchor;
+import net.malisis.core.client.gui.component.interaction.UIButton;
 import net.malisis.core.client.gui.component.interaction.UISelect;
 import net.malisis.core.client.gui.component.interaction.UITextField;
 import org.lwjgl.input.Keyboard;
@@ -40,11 +40,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GuideGui extends SimpleGui {
-    private UISelect uisPage;
+    private UISelect usPage;
     private UITextField utfContents;
 
-    public GuideGui(SimpleGui gui) {
-        super(gui);
+    public GuideGui() {
         buildGui();
     }
 
@@ -52,30 +51,80 @@ public class GuideGui extends SimpleGui {
     protected void buildGui() {
         guiscreenBackground = false;
 
-        final UIForm frmGuide = new UIForm(this, 450, 250, "Guide");
+        final UIForm frmGuide = new UIForm(this, 450, 275, "Guide");
         frmGuide.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
         frmGuide.setName("form.guide");
         frmGuide.setColor(13158600);
         frmGuide.setBackgroundAlpha(255);
 
-        uisPage = new UISelect(this, 140, populate());
-        uisPage.setAnchor(Anchor.TOP | Anchor.RIGHT);
-        uisPage.setPosition(-5, 5);
-        uisPage.setName("form.guide.select.page");
-        uisPage.setTextShadow(false);
-        uisPage.register(this);
-        frmGuide.getContentContainer().add(uisPage);
+        usPage = new UISelect(this, 140, populate());
+        usPage.setAnchor(Anchor.TOP | Anchor.RIGHT);
+        usPage.setPosition(-5, 5);
+        usPage.setName("form.guide.select.page");
+        usPage.setTextShadow(false);
+        usPage.register(this);
+        frmGuide.getContentContainer().add(usPage);
 
         utfContents = new UITextField(this, true);
         utfContents.setPosition(5, 20);
-        utfContents.setSize(440, 200);
+        utfContents.setSize(440, 215);
         utfContents.setName("form.guide.textfield.contents");
-        utfContents.setColors(utfContents.getTextColor(), 459343, 13158600, uisPage.getSelectTextColor(), false);
+        utfContents.setColors(utfContents.getTextColor(), 459343, 13158600, usPage.getSelectTextColor(), false);
         frmGuide.getContentContainer().add(utfContents);
+
+        final UIButton ubtnClose = new UIButton(this, "Close");
+        ubtnClose.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
+        ubtnClose.setPosition(-5, -5);
+        ubtnClose.setSize(40, 18);
+        ubtnClose.setName("form.guide.button.close");
+        ubtnClose.register(this);
+        frmGuide.getContentContainer().add(ubtnClose);
+
+        final UIButton ubtnSave = new UIButton(this, "Save");
+        ubtnSave.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
+        ubtnSave.setPosition(ubtnClose.getX() - 5 - ubtnClose.getWidth(), ubtnClose.getY());
+        ubtnSave.setSize(40, 18);
+        ubtnSave.setName("form.guide.button.save");
+        ubtnSave.setDisabled(true);
+        ubtnSave.register(this);
+        frmGuide.getContentContainer().add(ubtnSave);
 
         addToScreen(frmGuide);
 
-        uisPage.select(0);
+        usPage.select(0);
+    }
+
+    @Override
+    protected void keyTyped(char keyChar, int keyCode) {
+        super.keyTyped(keyChar, keyCode);
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_F5)) {
+            int selIndex = -1;
+
+            if (usPage.getSelectedOption() != null) {
+                selIndex = usPage.getSelectedOption().getIndex();
+            }
+
+            PageUtil.loadAll();
+
+            final Map<Integer, UISelect.Option> options = populate();
+            usPage.setOptions(options);
+
+            if (!options.isEmpty()) {
+                if (selIndex != -1 && options.get(selIndex) != null) {
+                    usPage.select(selIndex);
+                } else {
+                    usPage.select(0);
+                }
+            }
+        }
+    }
+
+    @Subscribe
+    public void onUIButtonClickEvent(UIButton.ClickEvent event) {
+        if (event.getComponent().getName().equalsIgnoreCase("form.guide.button.close")) {
+            close();
+        }
     }
 
     @Subscribe
@@ -86,32 +135,6 @@ public class GuideGui extends SimpleGui {
         if (event.getComponent().getName().equalsIgnoreCase("form.guide.select.page")) {
             ((UIForm) event.getComponent().getParent().getParent()).setTitle("Guide (" + event.getNewValue().getLabel() + ")");
             utfContents.setText(((Page) event.getNewValue().getKey()).getContents());
-        }
-    }
-
-    @Override
-    protected void keyTyped(char keyChar, int keyCode) {
-        super.keyTyped(keyChar, keyCode);
-
-        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_F5)) {
-            int selIndex = -1;
-
-            if (uisPage.getSelectedOption() != null) {
-                selIndex = uisPage.getSelectedOption().getIndex();
-            }
-
-            PageUtil.loadAll();
-
-            final Map<Integer, UISelect.Option> options = populate();
-            uisPage.setOptions(options);
-
-            if (!options.isEmpty()) {
-                if (selIndex != -1 && options.get(selIndex) != null) {
-                    uisPage.select(selIndex);
-                } else {
-                    uisPage.select(0);
-                }
-            }
         }
     }
 
