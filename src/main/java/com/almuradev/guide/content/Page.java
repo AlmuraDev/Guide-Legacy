@@ -49,7 +49,7 @@ public final class Page {
         return created;
     }
 
-    protected Page setCreated(Date created) {
+    public Page setCreated(Date created) {
         this.created = created;
         return this;
     }
@@ -58,7 +58,7 @@ public final class Page {
         return lastModified;
     }
 
-    protected Page setLastModified(Date lastModified) {
+    public Page setLastModified(Date lastModified) {
         this.lastModified = lastModified;
         return this;
     }
@@ -67,7 +67,7 @@ public final class Page {
         return name;
     }
 
-    protected Page setName(String name) {
+    public Page setName(String name) {
         this.name = name;
         return this;
     }
@@ -76,7 +76,7 @@ public final class Page {
         return author;
     }
 
-    protected Page setAuthor(String author) {
+    public Page setAuthor(String author) {
         this.author = author;
         return this;
     }
@@ -85,7 +85,7 @@ public final class Page {
         return lastContributor;
     }
 
-    protected Page setLastContributor(String lastContributor) {
+    public Page setLastContributor(String lastContributor) {
         this.lastContributor = lastContributor;
         return this;
     }
@@ -94,7 +94,7 @@ public final class Page {
         return contents;
     }
 
-    protected Page setContents(String contents) {
+    public Page setContents(String contents) {
         this.contents = contents;
         return this;
     }

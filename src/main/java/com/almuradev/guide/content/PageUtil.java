@@ -30,6 +30,7 @@ import com.almuradev.almurasdk.util.Colors;
 import com.almuradev.guide.Guide;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import org.yaml.snakeyaml.DumperOptions;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -84,7 +85,7 @@ public class PageUtil {
     public static void loadPages(Path path, DirectoryStream.Filter<Path> filter) {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, filter)) {
             for (Path p : stream) {
-                final ConfigurationNode root = YAMLConfigurationLoader.builder().setFile(p.toFile()).build().load();
+                final ConfigurationNode root = YAMLConfigurationLoader.builder().setFile(p.toFile()).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build().load();
                 try {
                     PageRegistry.putPage(createPage(p.getFileName().toString().replace(".yml", ""), root));
                 } catch (ParseException e) {
@@ -102,9 +103,24 @@ public class PageUtil {
         final String author = root.getChild("author").getString("Unknown");
         final Date lastModified = DATE_FORMATTER.parse(root.getChild("last-modified").getString("1/1/1900"));
         final String lastContributor = root.getChild("last-contributor").getString("Unknown");
-        final String contents = root.getChild("contents").getString("");
+        final String contents = replaceColorCodes("&", root.getChild("contents").getString(""), true);
 
         return new Page(identifier, name, created, author, lastModified, lastContributor, contents);
+    }
+
+    public static void savePage(String identifier, Page page) throws IOException {
+        Path p = Paths.get(PATH_PAGES.toString(), identifier + ".yml");
+        if (Files.exists(p)) {
+            final YAMLConfigurationLoader loader = YAMLConfigurationLoader.builder().setFile(p.toFile()).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build();
+            final ConfigurationNode root = loader.load();
+            root.getChild("name").setValue(page.getName());
+            root.getChild("created").setValue(DATE_FORMATTER.format(page.getCreated()));
+            root.getChild("author").setValue(page.getAuthor());
+            root.getChild("last-modified").setValue(DATE_FORMATTER.format(page.getLastModified()));
+            root.getChild("last-contributor").setValue(page.getLastContributor());
+            root.getChild("contents").setValue(page.getContents());
+            loader.save(root);
+        }
     }
 
     /**
@@ -113,7 +129,7 @@ public class PageUtil {
      * @param rawText The text to replace
      * @return The replaced text
      */
-    public static String replaceColorCodes(char colorCodeStart, String rawText, boolean toColorsList) {
+    public static String replaceColorCodes(String colorCodeStart, String rawText, boolean toColorsList) {
         for (Color c : COLORS) {
             //Replace color map -> char + charcode
             if (!toColorsList) {

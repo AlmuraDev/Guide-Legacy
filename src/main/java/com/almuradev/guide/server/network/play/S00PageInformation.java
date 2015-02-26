@@ -24,8 +24,8 @@
  */
 package com.almuradev.guide.server.network.play;
 
+import com.almuradev.guide.Guide;
 import com.almuradev.guide.content.Page;
-import com.almuradev.guide.content.PageRegistry;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -81,10 +81,7 @@ public class S00PageInformation implements IMessage, IMessageHandler<S00PageInfo
 
     @Override
     public IMessage onMessage(S00PageInformation message, MessageContext ctx) {
-        if (ctx.side.isClient()) {
-            PageRegistry.handlePageInformation(message);
-        }
-
+        Guide.PROXY.handlePageInformation(message);
         return null;
     }
 }

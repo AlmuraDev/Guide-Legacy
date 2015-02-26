@@ -28,11 +28,16 @@ import com.almuradev.almurasdk.AlmuraSDK;
 import com.almuradev.almurasdk.permissions.Permissions;
 import com.almuradev.guide.CommonProxy;
 import com.almuradev.guide.client.gui.GuideGui;
+import com.almuradev.guide.content.Page;
+import com.almuradev.guide.content.PageRegistry;
+import com.almuradev.guide.event.PageInformationEvent;
+import com.almuradev.guide.server.network.play.S00PageInformation;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
 public class ClientProxy extends CommonProxy {
@@ -45,6 +50,14 @@ public class ClientProxy extends CommonProxy {
         super.onPreInitializationEvent(event);
         AlmuraSDK.getPermissionsManager().registerPermissible(PERMISSIBLE_CLIENT);
         FMLCommonHandler.instance().bus().register(this);
+    }
+
+    @Override
+    public void handlePageInformation(S00PageInformation packet) {
+        super.handlePageInformation(packet);
+
+        final Page page = PageRegistry.getPage(packet.identifier).get();
+        MinecraftForge.EVENT_BUS.post(new PageInformationEvent(page));
     }
 
     @SubscribeEvent

@@ -22,36 +22,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.almuradev.guide.content;
+package com.almuradev.guide.event;
 
-import com.almuradev.guide.server.network.play.S02PageOpen;
-import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import com.almuradev.guide.content.Page;
+import cpw.mods.fml.common.eventhandler.Event;
 
-import java.util.Collections;
-import java.util.Map;
+public final class PageInformationEvent extends Event {
+    public final Page page;
 
-public class PageRegistry {
-    private static final Map<String, Page> PAGES = Maps.newHashMap();
-
-    public static Optional<Page> getPage(String identifier) {
-        return Optional.fromNullable(PAGES.get(identifier));
+    public PageInformationEvent(Page page) {
+        this.page = page;
     }
-
-    public static Page putPage(Page page) {
-        return PAGES.put(page.getIdentifier(), page);
-    }
-
-    public static Map<String, Page> getAll() {
-        return Collections.unmodifiableMap(PAGES);
-    }
-
-    public static void clearPages() {
-        PAGES.clear();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void handlePageOpen(S02PageOpen packet) {}
 }

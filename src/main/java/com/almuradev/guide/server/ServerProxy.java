@@ -25,7 +25,40 @@
 package com.almuradev.guide.server;
 
 import com.almuradev.guide.CommonProxy;
+import com.almuradev.guide.Guide;
+import com.almuradev.guide.content.Page;
+import com.almuradev.guide.content.PageRegistry;
+import com.almuradev.guide.content.PageUtil;
+import com.almuradev.guide.event.PageInformationEvent;
+import com.almuradev.guide.server.network.play.S00PageInformation;
+import com.google.common.base.Optional;
+import net.minecraftforge.common.MinecraftForge;
+
+import java.io.IOException;
 
 public class ServerProxy extends CommonProxy {
     public static final String CLASSPATH = "com.almuradev.guide.server.ServerProxy";
+
+    @Override
+    public void handlePageInformation(S00PageInformation packet) {
+        super.handlePageInformation(packet);
+
+        final Optional<Page> optPage = PageRegistry.getPage(packet.identifier);
+
+        if (optPage.isPresent()) {
+            final Page page = optPage.get();
+
+            MinecraftForge.EVENT_BUS.post(new PageInformationEvent(page));
+
+            try {
+                PageUtil.savePage(packet.identifier, page);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Guide.NETWORK_FORGE.sendToAll(
+                    new S00PageInformation(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(),
+                                           page.getLastContributor(), page.getContents()));
+        }
+    }
 }

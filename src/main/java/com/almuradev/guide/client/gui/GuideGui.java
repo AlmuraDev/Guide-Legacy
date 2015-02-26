@@ -27,15 +27,22 @@ package com.almuradev.guide.client.gui;
 import com.almuradev.almurasdk.client.gui.SimpleGui;
 import com.almuradev.almurasdk.client.gui.components.UIForm;
 import com.almuradev.almurasdk.util.Color;
+import com.almuradev.guide.Guide;
+import com.almuradev.guide.client.ClientProxy;
 import com.almuradev.guide.content.Page;
 import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.content.PageUtil;
+import com.almuradev.guide.event.PageInformationEvent;
+import com.almuradev.guide.server.network.play.S00PageInformation;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.Subscribe;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.malisis.core.client.gui.Anchor;
 import net.malisis.core.client.gui.component.interaction.UIButton;
 import net.malisis.core.client.gui.component.interaction.UISelect;
 import net.malisis.core.client.gui.component.interaction.UITextField;
+import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
 import java.util.HashMap;
@@ -47,6 +54,7 @@ public class GuideGui extends SimpleGui {
 
     private UISelect usPage;
     private UITextField utfContents;
+    private UIButton ubtnFormat, ubtnCode, ubtnSave;
 
     public GuideGui() {
         buildGui();
@@ -79,6 +87,22 @@ public class GuideGui extends SimpleGui {
         utfContents.getScrollbar().setAutoHide(true);
         frmGuide.getContentContainer().add(utfContents);
 
+        ubtnFormat = new UIButton(this, "F");
+        ubtnFormat.setPosition(5, 3);
+        ubtnFormat.setSize(6, 6);
+        ubtnFormat.setName("form.guide.button.format");
+        ubtnFormat.setVisible(false);
+        ubtnFormat.register(this);
+        frmGuide.getContentContainer().add(ubtnFormat);
+
+        ubtnCode = new UIButton(this, "C");
+        ubtnCode.setPosition(5 + ubtnFormat.getWidth() + ubtnFormat.getX(), 3);
+        ubtnCode.setSize(6, 6);
+        ubtnCode.setName("form.guide.button.code");
+        ubtnCode.setVisible(false);
+        ubtnCode.register(this);
+        frmGuide.getContentContainer().add(ubtnCode);
+
         final UIButton ubtnClose = new UIButton(this, "Close");
         ubtnClose.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
         ubtnClose.setPosition(-5, -5);
@@ -87,17 +111,24 @@ public class GuideGui extends SimpleGui {
         ubtnClose.register(this);
         frmGuide.getContentContainer().add(ubtnClose);
 
-        final UIButton ubtnSave = new UIButton(this, "Save");
+        ubtnSave = new UIButton(this, "Save");
         ubtnSave.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
         ubtnSave.setPosition(ubtnClose.getX() - 5 - ubtnClose.getWidth(), ubtnClose.getY());
         ubtnSave.setSize(40, 18);
         ubtnSave.setName("form.guide.button.save");
+        ubtnSave.setVisible(false);
         ubtnSave.register(this);
         frmGuide.getContentContainer().add(ubtnSave);
 
         addToScreen(frmGuide);
 
         usPage.select(0);
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    @Override
+    public void onClose() {
+        MinecraftForge.EVENT_BUS.unregister(this);
     }
 
     @Override
@@ -129,33 +160,55 @@ public class GuideGui extends SimpleGui {
     @Subscribe
     public void onUIButtonClickEvent(UIButton.ClickEvent event) {
         switch (event.getComponent().getName()) {
+            case "form.guide.button.format":
+                utfContents.setText(PageUtil.replaceColorCodes("&", utfContents.getText(), true));
+                break;
+            case "form.guide.button.code":
+                utfContents.setText(PageUtil.replaceColorCodes("&", utfContents.getText(), false));
+                break;
             case "form.guide.button.close":
+                close();
                 break;
             case "form.guide.button.save":
-                final String toColorListContents = PageUtil.replaceColorCodes('&', ((Page) usPage.getSelectedOption().getKey()).getContents(), true);
-                System.out.println(toColorListContents);
-                final String fromColorListContents = PageUtil.replaceColorCodes('&', toColorListContents, false);
-                System.out.println(fromColorListContents);
+                if (usPage.getSelectedOption() != null) {
+                    final Page page = (Page) usPage.getSelectedOption().getKey();
+                    Guide.NETWORK_FORGE.sendToServer(new S00PageInformation(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(), page.getLastContributor(), utfContents.getText()));
+                }
+                break;
 
-        }
-
-        if (event.getComponent().getName().equalsIgnoreCase("form.guide.button.close")) {
-            close();
         }
     }
 
     @Subscribe
     public void onUISelectEvent(UISelect.SelectEvent event) {
-        if (event.getOption() == null) {
+        if (event.getNewValue() == null) {
+            ubtnFormat.setVisible(false);
+            ubtnCode.setVisible(false);
+            ubtnSave.setVisible(false);
             return;
         }
         if (event.getComponent().getName().equalsIgnoreCase("form.guide.select.page")) {
             ((UIForm) event.getComponent().getParent().getParent()).setTitle("Guide (" + event.getNewValue().getLabel() + ")");
             utfContents.setText(((Page) event.getNewValue().getKey()).getContents());
+
+            ubtnFormat.setVisible(ClientProxy.getPermissions().hasPermission("edit." + ((Page) event.getNewValue().getKey()).getIdentifier()));
+            ubtnCode.setVisible(ClientProxy.getPermissions().hasPermission("edit." + ((Page) event.getNewValue().getKey()).getIdentifier()));
+
+            // Only show 'Save' button if they have permission to edit the chosen guide.
+            ubtnSave.setVisible(ClientProxy.getPermissions().hasPermission("edit." + ((Page) event.getNewValue().getKey()).getIdentifier()));
         }
     }
 
-    public Map<Integer, UISelect.Option> populate() {
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onPageInformationEvent(PageInformationEvent event) {
+        if (usPage.getSelectedOption() != null) {
+            if (usPage.getSelectedOption().getKey().equals(event.page)) {
+                utfContents.setText(event.page.getContents());
+            }
+        }
+    }
+
+    private Map<Integer, UISelect.Option> populate() {
         final HashMap<Integer, UISelect.Option> options = Maps.newHashMap();
 
         int count = 0;
