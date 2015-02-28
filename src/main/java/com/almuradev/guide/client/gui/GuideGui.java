@@ -27,6 +27,7 @@ package com.almuradev.guide.client.gui;
 import com.almuradev.almurasdk.client.gui.SimpleGui;
 import com.almuradev.almurasdk.client.gui.components.UIForm;
 import com.almuradev.almurasdk.util.Color;
+import com.almuradev.almurasdk.util.Colors;
 import com.almuradev.guide.Guide;
 import com.almuradev.guide.client.ClientProxy;
 import com.almuradev.guide.content.Page;
@@ -39,8 +40,13 @@ import com.google.common.eventbus.Subscribe;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.malisis.core.client.gui.Anchor;
+import net.malisis.core.client.gui.component.UIComponent;
+import net.malisis.core.client.gui.component.container.UIContainer;
+import net.malisis.core.client.gui.component.container.UIPanel;
+import net.malisis.core.client.gui.component.container.UITabGroup;
 import net.malisis.core.client.gui.component.interaction.UIButton;
 import net.malisis.core.client.gui.component.interaction.UISelect;
+import net.malisis.core.client.gui.component.interaction.UITab;
 import net.malisis.core.client.gui.component.interaction.UITextField;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
@@ -50,11 +56,10 @@ import java.util.Map;
 
 public class GuideGui extends SimpleGui {
     public static final Color CONTROL = new Color(13158600);
-    public static final Color GRAY_DARK_BLUE_MIX = new Color(459343);
 
     private UISelect usPage;
     private UITextField utfContents;
-    private UIButton ubtnFormat, ubtnCode, ubtnSave;
+    private UIButton ubtnFormat, ubtnCode, ubtnDelete, ubtnSave;
 
     public GuideGui() {
         buildGui();
@@ -64,7 +69,7 @@ public class GuideGui extends SimpleGui {
     protected void buildGui() {
         guiscreenBackground = false;
 
-        final UIForm frmGuide = new UIForm(this, 450, 275, "Guide");
+        final UIForm frmGuide = new UIForm(this, 450, 270, "Guide");
         frmGuide.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
         frmGuide.setName("form.guide");
         frmGuide.setColor(CONTROL.getGuiColorCode());
@@ -74,47 +79,97 @@ public class GuideGui extends SimpleGui {
         usPage.setAnchor(Anchor.TOP | Anchor.RIGHT);
         usPage.setPosition(-5, 5);
         usPage.setName("form.guide.select.page");
-        usPage.setTextShadow(false);
+        usPage.setColors(Colors.WHITE.getGuiColorCode(), usPage.getBgColor(), Colors.RED.getGuiColorCode(), usPage.getHoverBgColor(), Colors.WHITE.getGuiColorCode(), false);
         usPage.register(this);
         frmGuide.getContentContainer().add(usPage);
 
-        utfContents = new UITextField(this, true);
-        utfContents.setPosition(5, 20);
-        utfContents.setSize(440, 215);
-        utfContents.setName("form.guide.textfield.contents");
-        utfContents.setColors(utfContents.getTextColor(), GRAY_DARK_BLUE_MIX.getGuiColorCode(), CONTROL.getGuiColorCode(),
-                              usPage.getSelectTextColor(), false);
-        utfContents.getScrollbar().setAutoHide(true);
-        frmGuide.getContentContainer().add(utfContents);
+        // =================== TABS ==================================
+        final UITabGroup utgTabs = new UITabGroup(this, UITabGroup.TabPosition.TOP);
+        utgTabs.setPosition(UIComponent.INHERITED, UIComponent.INHERITED);
+        final UIPanel upTabs = new UIPanel(this).setSize(440, 215).setPosition(5, 20);
+        frmGuide.getContentContainer().add(upTabs);
+
+        final UITab utPage = new UITab(this, "Page");
+        utPage.setColor(Colors.DARK_GRAY.getGuiColorCode());
+        final UIContainer ucPage = new UIContainer(this);
+        utgTabs.addTab(utPage, ucPage);
+        upTabs.add(ucPage);
 
         ubtnFormat = new UIButton(this, "F");
-        ubtnFormat.setPosition(5, 3);
-        ubtnFormat.setSize(6, 6);
+        ubtnFormat.setPosition(2, 5);
+        ubtnFormat.setAutoSize(false);
+        ubtnFormat.setSize(12, 12);
         ubtnFormat.setName("form.guide.button.format");
+        ubtnFormat.setTextShadow(false);
         ubtnFormat.setVisible(false);
         ubtnFormat.register(this);
-        frmGuide.getContentContainer().add(ubtnFormat);
+        ucPage.add(ubtnFormat);
 
         ubtnCode = new UIButton(this, "C");
-        ubtnCode.setPosition(5 + ubtnFormat.getWidth() + ubtnFormat.getX(), 3);
-        ubtnCode.setSize(6, 6);
+        ubtnCode.setPosition(ubtnFormat.getWidth() + ubtnFormat.getX() + 2, ubtnFormat.getY());
+        ubtnCode.setAutoSize(false);
+        ubtnCode.setSize(12, 12);
         ubtnCode.setName("form.guide.button.code");
+        ubtnCode.setTextShadow(false);
         ubtnCode.setVisible(false);
         ubtnCode.register(this);
-        frmGuide.getContentContainer().add(ubtnCode);
+        ucPage.add(ubtnCode);
+
+        utfContents = new UITextField(this, true);
+        utfContents.setPosition(2, ubtnFormat.getY() + ubtnFormat.getHeight() + 2);
+        utfContents.setSize(430, 187);
+        utfContents.setName("form.guide.textfield.contents");
+        utfContents.setColors(utfContents.getTextColor(), Colors.GRAY.getGuiColorCode(), CONTROL.getGuiColorCode(),
+                              Colors.BLACK.getGuiColorCode(), false);
+        utfContents.getScrollbar().setAutoHide(true);
+        ucPage.add(utfContents);
+
+        final UITab utDetails = new UITab(this, "Details");
+        utDetails.setColor(Colors.DARK_GRAY.getGuiColorCode());
+        final UIContainer ucDetails = new UIContainer(this);
+        utgTabs.addTab(utDetails, ucDetails);
+
+        utgTabs.setActiveTab(utPage);
+        utgTabs.attachTo(upTabs, false);
+        frmGuide.getContentContainer().add(utgTabs);
+
+        // ========================= TABS END =============================
+        final UIButton ubtnAdd = new UIButton(this, "+");
+        ubtnAdd.setAnchor(Anchor.TOP | Anchor.RIGHT);
+        ubtnAdd.setPosition(usPage.getX() - usPage.getWidth() - 2, 5);
+        ubtnAdd.setAutoSize(false);
+        ubtnAdd.setSize(12, 12);
+        ubtnAdd.setName("form.guide.button.add");
+        ubtnAdd.setTextShadow(false);
+        ubtnAdd.setVisible(ClientProxy.getPermissions().hasPermission("create"));
+        ubtnAdd.register(this);
+        frmGuide.getContentContainer().add(ubtnAdd);
+
+        ubtnDelete = new UIButton(this, "-");
+        ubtnDelete.setAnchor(Anchor.TOP | Anchor.RIGHT);
+        ubtnDelete.setPosition(ubtnAdd.getX() - ubtnAdd.getWidth() - 2, ubtnAdd.getY());
+        ubtnDelete.setAutoSize(false);
+        ubtnDelete.setSize(12, 12);
+        ubtnDelete.setName("form.guide.button.delete");
+        ubtnDelete.setTextShadow(false);
+        ubtnDelete.setVisible(false);
+        ubtnDelete.register(this);
+        frmGuide.getContentContainer().add(ubtnDelete);
 
         final UIButton ubtnClose = new UIButton(this, "Close");
         ubtnClose.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
         ubtnClose.setPosition(-5, -5);
-        ubtnClose.setSize(40, 18);
+        ubtnClose.setSize(30, 15);
+        ubtnClose.setTextShadow(false);
         ubtnClose.setName("form.guide.button.close");
         ubtnClose.register(this);
         frmGuide.getContentContainer().add(ubtnClose);
 
         ubtnSave = new UIButton(this, "Save");
         ubtnSave.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
-        ubtnSave.setPosition(ubtnClose.getX() - 5 - ubtnClose.getWidth(), ubtnClose.getY());
-        ubtnSave.setSize(40, 18);
+        ubtnSave.setPosition(ubtnClose.getX() - ubtnClose.getWidth() - 2, ubtnClose.getY());
+        ubtnSave.setSize(30, 15);
+        ubtnSave.setTextShadow(false);
         ubtnSave.setName("form.guide.button.save");
         ubtnSave.setVisible(false);
         ubtnSave.register(this);
@@ -184,6 +239,7 @@ public class GuideGui extends SimpleGui {
         if (event.getNewValue() == null) {
             ubtnFormat.setVisible(false);
             ubtnCode.setVisible(false);
+            ubtnDelete.setVisible(false);
             ubtnSave.setVisible(false);
             return;
         }
@@ -191,11 +247,14 @@ public class GuideGui extends SimpleGui {
             ((UIForm) event.getComponent().getParent().getParent()).setTitle("Guide (" + event.getNewValue().getLabel() + ")");
             utfContents.setText(((Page) event.getNewValue().getKey()).getContents());
 
-            ubtnFormat.setVisible(ClientProxy.getPermissions().hasPermission("edit." + ((Page) event.getNewValue().getKey()).getIdentifier()));
-            ubtnCode.setVisible(ClientProxy.getPermissions().hasPermission("edit." + ((Page) event.getNewValue().getKey()).getIdentifier()));
+            ubtnFormat.setVisible(ClientProxy.getPermissions().hasPermission("save." + ((Page) event.getNewValue().getKey()).getIdentifier()));
+            ubtnCode.setVisible(ClientProxy.getPermissions().hasPermission("save." + ((Page) event.getNewValue().getKey()).getIdentifier()));
 
-            // Only show 'Save' button if they have permission to edit the chosen guide.
-            ubtnSave.setVisible(ClientProxy.getPermissions().hasPermission("edit." + ((Page) event.getNewValue().getKey()).getIdentifier()));
+            // Only show '-' button if they have permission to delete the chosen guide.
+            ubtnDelete.setVisible(ClientProxy.getPermissions().hasPermission("delete." + ((Page) event.getNewValue().getKey()).getIdentifier()));
+
+            // Only show 'Save' button if they have permission to save the chosen guide.
+            ubtnSave.setVisible(ClientProxy.getPermissions().hasPermission("save." + ((Page) event.getNewValue().getKey()).getIdentifier()));
         }
     }
 
