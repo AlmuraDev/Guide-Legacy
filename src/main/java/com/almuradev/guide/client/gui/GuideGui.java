@@ -1,7 +1,7 @@
 /*
  * This file is part of Guide, licensed under the MIT License (MIT).
  *
- * Copyright (c) AlmuraDev <http://beta.almuramc.com/>
+ * Copyright (c) AlmuraDev <http://github.com/AlmuraDev/Guide/>
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,6 +40,7 @@ import com.google.common.eventbus.Subscribe;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.malisis.core.client.gui.Anchor;
+import net.malisis.core.client.gui.ComponentPosition;
 import net.malisis.core.client.gui.component.UIComponent;
 import net.malisis.core.client.gui.component.container.UIContainer;
 import net.malisis.core.client.gui.component.container.UIPanel;
@@ -55,18 +56,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GuideGui extends SimpleGui {
-    public static final Color CONTROL = new Color(13158600);
+    public static final Color CONTROL = new Color("control", 13158600);
 
-    private UISelect usPage;
+    private UISelect<Page> usPage;
     private UITextField utfContents;
     private UIButton ubtnFormat, ubtnCode, ubtnDelete, ubtnSave;
 
-    public GuideGui() {
-        buildGui();
-    }
-
     @Override
-    protected void buildGui() {
+    public void construct() {
         guiscreenBackground = false;
 
         final UIForm frmGuide = new UIForm(this, 450, 270, "Guide");
@@ -79,18 +76,20 @@ public class GuideGui extends SimpleGui {
         usPage.setAnchor(Anchor.TOP | Anchor.RIGHT);
         usPage.setPosition(-5, 5);
         usPage.setName("form.guide.select.page");
-        usPage.setColors(Colors.WHITE.getGuiColorCode(), usPage.getBgColor(), Colors.RED.getGuiColorCode(), usPage.getHoverBgColor(), Colors.WHITE.getGuiColorCode(), false);
+        usPage.setColors(Colors.WHITE.getGuiColorCode(), usPage.getBgColor(), Colors.RED.getGuiColorCode(), usPage.getHoverBgColor(), Colors.WHITE
+                .getGuiColorCode(), usPage.getDisabledTextColor(), false);
         usPage.register(this);
         frmGuide.getContentContainer().add(usPage);
 
         // =================== TABS ==================================
-        final UITabGroup utgTabs = new UITabGroup(this, UITabGroup.TabPosition.TOP);
+        final UITabGroup utgTabs = new UITabGroup(this, ComponentPosition.TOP);
         utgTabs.setPosition(UIComponent.INHERITED, UIComponent.INHERITED);
         final UIPanel upTabs = new UIPanel(this).setSize(440, 215).setPosition(5, 20);
         frmGuide.getContentContainer().add(upTabs);
 
-        final UITab utPage = new UITab(this, "Page");
-        utPage.setColor(Colors.DARK_GRAY.getGuiColorCode());
+        final UITab utPage = new UITab(this, "Page")
+                .setBgColor(Colors.DARK_GRAY.getGuiColorCode())
+                .setTextColor(Colors.WHITE.getGuiColorCode());
         final UIContainer ucPage = new UIContainer(this);
         utgTabs.addTab(utPage, ucPage);
         upTabs.add(ucPage);
@@ -119,13 +118,14 @@ public class GuideGui extends SimpleGui {
         utfContents.setPosition(2, ubtnFormat.getY() + ubtnFormat.getHeight() + 2);
         utfContents.setSize(430, 187);
         utfContents.setName("form.guide.textfield.contents");
-        utfContents.setColors(utfContents.getTextColor(), Colors.GRAY.getGuiColorCode(), CONTROL.getGuiColorCode(),
-                              Colors.BLACK.getGuiColorCode(), false);
+        utfContents.setOptions(utfContents.getTextColor(), Colors.GRAY.getGuiColorCode(), CONTROL.getGuiColorCode(),
+                Colors.BLACK.getGuiColorCode(), false);
         utfContents.getScrollbar().setAutoHide(true);
         ucPage.add(utfContents);
 
-        final UITab utDetails = new UITab(this, "Details");
-        utDetails.setColor(Colors.DARK_GRAY.getGuiColorCode());
+        final UITab utDetails = new UITab(this, "Details")
+                .setBgColor(Colors.DARK_GRAY.getGuiColorCode())
+                .setTextColor(Colors.WHITE.getGuiColorCode());
         final UIContainer ucDetails = new UIContainer(this);
         utgTabs.addTab(utDetails, ucDetails);
 
@@ -177,7 +177,7 @@ public class GuideGui extends SimpleGui {
 
         addToScreen(frmGuide);
 
-        usPage.select(0);
+        usPage.selectFirst();
         MinecraftForge.EVENT_BUS.register(this);
     }
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of Guide, licensed under the MIT License (MIT).
  *
- * Copyright (c) AlmuraDev <http://beta.almuramc.com/>
+ * Copyright (c) AlmuraDev <http://github.com/AlmuraDev/Guide/>
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -59,6 +59,7 @@ public class ServerProxy extends CommonProxy {
             Guide.NETWORK_FORGE.sendToAll(
                     new S00PageInformation(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(),
                                            page.getLastContributor(), page.getContents()));
+
         }
     }
 }

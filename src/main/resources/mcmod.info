@@ -2,7 +2,7 @@
   "modid": "guide",
   "name": "Guide",
   "description": "The information mod, specializing in showing lots of information in an easy to use GUI.",
-  "version": "1.7.10-1291",
+  "version": "1.7.10-1342",
   "credits": "",
   "logoFile": "",
   "mcversion": "1.7.10",
@@ -11,6 +11,7 @@
   "authorList": [ "AlmuraDev" ],
   "parent": "",
   "screenshots": [],
-  "dependencies": [ "MinecraftForge", "AlmuraSDK" ]
+  "requiredMods": [ "almurasdk" ],
+  "dependencies": [ "almurasdk" ],
+  "useDependencyInformation": "true"
 }]
-

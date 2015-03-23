@@ -26,9 +26,15 @@ apply plugin: 'maven'
 group = 'com.almuradev'
 archivesBaseName = 'guide'
 
+ext.name = 'Guide'
+ext.inceptionYear = '2015'
+ext.packaging = 'jar'
+ext.url = 'http://github.com/AlmuraDev/Guide'
+ext.organization = 'AlmuraDev'
 ext.minecraftVersion = '1.7.10'
-ext.forgeVersion = '10.13.2.1291'
-version = minecraftVersion + '-' + forgeVersion.substring(forgeVersion.size() - 4) + '-SNAPSHOT'
+ext.forgeVersion = '10.13.2.1342'
+ext.guideVersion = '1'
+version = minecraftVersion + '-' + forgeVersion.substring(forgeVersion.size() - 4) + '-' + ext.guideVersion
 
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
@@ -47,16 +53,15 @@ repositories {
 }
 
 minecraft {
-    version = project.ext.minecraftVersion + '-' + project.ext.forgeVersion
+    version = project.ext.minecraftVersion + '-' + project.ext.forgeVersion + '-' + project.ext.minecraftVersion
     runDir = "run/"
-}
-
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    mappings= "stable_12"
 }
 
 dependencies {
-    compile 'com.almuradev:almurasdk:1.7.10-1291-SNAPSHOT'
+    compile ('com.almuradev:almurasdk:1.7.10-1342-1-SNAPSHOT:dev') {
+        transitive = true
+    }
 }
 
 processResources {
@@ -101,29 +106,11 @@ def manifestEntries = [
 
 jar {
     manifest.mainAttributes(manifestEntries)
-
-    classifier = 'release'
 }
 
 if (JavaVersion.current().isJava8Compatible()) {
     tasks.withType(Javadoc) {
+        // disable the crazy super-strict doclint tool in Java 8
         options.addStringOption('Xdoclint:none', '-quiet')
     }
-}
-
-
-task sourceJar(type: Jar, dependsOn: sourceMainJava) {
-    from "build/sources/java"
-    from "build/resources/main/java"
-    classifier = "sources"
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
-    classifier = "javadoc"
-}
-
-artifacts {
-    archives sourceJar
-    archives javadocJar
 }
