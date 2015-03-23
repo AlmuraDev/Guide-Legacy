@@ -31,11 +31,9 @@ import com.almuradev.almurasdk.util.Colors;
 import com.almuradev.guide.Guide;
 import com.almuradev.guide.client.ClientProxy;
 import com.almuradev.guide.content.Page;
-import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.content.PageUtil;
 import com.almuradev.guide.event.PageInformationEvent;
 import com.almuradev.guide.server.network.play.S00PageInformation;
-import com.google.common.collect.Maps;
 import com.google.common.eventbus.Subscribe;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -52,10 +50,11 @@ import net.malisis.core.client.gui.component.interaction.UITextField;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 
 public class GuideGui extends SimpleGui {
+
     public static final Color CONTROL = new Color("control", 13158600);
 
     private UISelect<Page> usPage;
@@ -72,7 +71,7 @@ public class GuideGui extends SimpleGui {
         frmGuide.setColor(CONTROL.getGuiColorCode());
         frmGuide.setBackgroundAlpha(255);
 
-        usPage = new UISelect(this, 140, populate());
+        usPage = new UISelect<>(this, 140, populate());
         usPage.setAnchor(Anchor.TOP | Anchor.RIGHT);
         usPage.setPosition(-5, 5);
         usPage.setName("form.guide.select.page");
@@ -191,22 +190,22 @@ public class GuideGui extends SimpleGui {
         super.keyTyped(keyChar, keyCode);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_F5)) {
-            int selIndex = -1;
+            Page selected = null;
 
-            if (usPage.getSelectedOption() != null) {
-                selIndex = usPage.getSelectedOption().getIndex();
+            if (usPage.getSelectedValue() != null) {
+                selected = usPage.getSelectedValue();
             }
 
             PageUtil.loadAll();
 
-            final Map<Integer, UISelect.Option> options = populate();
+            final List<Page> options = populate();
             usPage.setOptions(options);
 
             if (!options.isEmpty()) {
-                if (selIndex != -1 && options.get(selIndex) != null) {
-                    usPage.select(selIndex);
+                if (selected != null && usPage.getOption(selected) != null) {
+                    usPage.select(selected);
                 } else {
-                    usPage.select(0);
+                    usPage.selectFirst();
                 }
             }
         }
@@ -227,7 +226,9 @@ public class GuideGui extends SimpleGui {
             case "form.guide.button.save":
                 if (usPage.getSelectedOption() != null) {
                     final Page page = (Page) usPage.getSelectedOption().getKey();
-                    Guide.NETWORK_FORGE.sendToServer(new S00PageInformation(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(), page.getLastContributor(), utfContents.getText()));
+                    Guide.NETWORK_FORGE.sendToServer(
+                            new S00PageInformation(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(),
+                                    page.getLastContributor(), utfContents.getText()));
                 }
                 break;
 
@@ -244,17 +245,17 @@ public class GuideGui extends SimpleGui {
             return;
         }
         if (event.getComponent().getName().equalsIgnoreCase("form.guide.select.page")) {
-            ((UIForm) event.getComponent().getParent().getParent()).setTitle("Guide (" + event.getNewValue().getLabel() + ")");
-            utfContents.setText(((Page) event.getNewValue().getKey()).getContents());
+            ((UIForm) event.getComponent().getParent().getParent()).setTitle("Guide (" + ((Page) event.getNewValue()).getName() + ")");
+            utfContents.setText(((Page) event.getNewValue()).getContents());
 
-            ubtnFormat.setVisible(ClientProxy.getPermissions().hasPermission("save." + ((Page) event.getNewValue().getKey()).getIdentifier()));
-            ubtnCode.setVisible(ClientProxy.getPermissions().hasPermission("save." + ((Page) event.getNewValue().getKey()).getIdentifier()));
+            ubtnFormat.setVisible(ClientProxy.getPermissions().hasPermission("save." + ((Page) event.getNewValue()).getIdentifier()));
+            ubtnCode.setVisible(ClientProxy.getPermissions().hasPermission("save." + ((Page) event.getNewValue()).getIdentifier()));
 
             // Only show '-' button if they have permission to delete the chosen guide.
-            ubtnDelete.setVisible(ClientProxy.getPermissions().hasPermission("delete." + ((Page) event.getNewValue().getKey()).getIdentifier()));
+            ubtnDelete.setVisible(ClientProxy.getPermissions().hasPermission("delete." + ((Page) event.getNewValue()).getIdentifier()));
 
             // Only show 'Save' button if they have permission to save the chosen guide.
-            ubtnSave.setVisible(ClientProxy.getPermissions().hasPermission("save." + ((Page) event.getNewValue().getKey()).getIdentifier()));
+            ubtnSave.setVisible(ClientProxy.getPermissions().hasPermission("save." + ((Page) event.getNewValue()).getIdentifier()));
         }
     }
 
@@ -267,15 +268,11 @@ public class GuideGui extends SimpleGui {
         }
     }
 
-    private Map<Integer, UISelect.Option> populate() {
-        final HashMap<Integer, UISelect.Option> options = Maps.newHashMap();
-
-        int count = 0;
-        for (Map.Entry<String, Page> entry : PageRegistry.getAll().entrySet()) {
-            options.put(count, new UISelect.Option<>(count, entry.getValue(), entry.getValue().getName()));
-            count++;
-        }
-
-        return options;
+    /**
+     * TODO This must be re-written.
+     * @return
+     */
+    private List<Page> populate() {
+        return Collections.emptyList();
     }
 }

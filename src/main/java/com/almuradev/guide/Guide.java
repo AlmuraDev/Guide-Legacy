@@ -38,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Guide.MOD_ID, name = "Guide", version = "1.7.10-1291")
 public class Guide {
+
     public static final String MOD_ID = "guide";
     public static final Logger LOGGER = LogManager.getLogger(Guide.class);
     public static final SimpleNetworkWrapper NETWORK_FORGE = new SimpleNetworkWrapper("GE|FOR");

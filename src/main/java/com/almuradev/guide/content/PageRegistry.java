@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public class PageRegistry {
+
     private static final Map<String, Page> PAGES = Maps.newHashMap();
 
     public static Optional<Page> getPage(String identifier) {
@@ -53,5 +54,6 @@ public class PageRegistry {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void handlePageOpen(S02PageOpen packet) {}
+    public static void handlePageOpen(S02PageOpen packet) {
+    }
 }

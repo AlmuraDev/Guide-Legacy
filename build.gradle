@@ -55,11 +55,11 @@ repositories {
 minecraft {
     version = project.ext.minecraftVersion + '-' + project.ext.forgeVersion + '-' + project.ext.minecraftVersion
     runDir = "run/"
-    mappings= "stable_12"
+    mappings = "stable_12"
 }
 
 dependencies {
-    compile ('com.almuradev:almurasdk:1.7.10-1342-1-SNAPSHOT:dev') {
+    compile('com.almuradev:almurasdk:1.7.10-1342-1-SNAPSHOT:dev') {
         transitive = true
     }
 }
@@ -80,7 +80,7 @@ license {
     header file('HEADER.txt')
     ignoreFailures false
     strictCheck true
-    includes (["**/*.java"])
+    includes(["**/*.java"])
     mapping {
         java = 'SLASHSTAR_STYLE'
     }
@@ -97,11 +97,11 @@ compileJava {
 }
 
 def manifestEntries = [
-        "Built-By": System.properties['user.name'],
-        "Created-By": System.properties['java.vm.version'] + " (" + System.properties['java.vm.vendor'] + ")",
-        "Implementation-Title": name,
+        "Built-By"              : System.properties['user.name'],
+        "Created-By"            : System.properties['java.vm.version'] + " (" + System.properties['java.vm.vendor'] + ")",
+        "Implementation-Title"  : name,
         "Implementation-Version": version,
-        "Implementation-Vendor": url
+        "Implementation-Vendor" : url
 ]
 
 jar {

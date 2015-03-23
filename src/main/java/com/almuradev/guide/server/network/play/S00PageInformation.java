@@ -38,12 +38,15 @@ import java.util.Date;
  * Instructs a client to synchronize a {@link Page}'s information or to store a new one.
  */
 public class S00PageInformation implements IMessage, IMessageHandler<S00PageInformation, IMessage> {
+
     public String identifier, name, author, lastContributor, contents;
     public Date created, lastModified;
 
-    public S00PageInformation() {}
+    public S00PageInformation() {
+    }
 
-    public S00PageInformation(String identifier, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
+    public S00PageInformation(String identifier, String name, Date created, String author, Date lastModified, String lastContributor,
+            String contents) {
         this.identifier = identifier;
         this.name = name;
         this.created = created;
@@ -54,7 +57,8 @@ public class S00PageInformation implements IMessage, IMessageHandler<S00PageInfo
     }
 
     public S00PageInformation(Page page) {
-        this(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(), page.getLastContributor(), page.getContents());
+        this(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(), page.getLastContributor(),
+                page.getContents());
     }
 
     @Override

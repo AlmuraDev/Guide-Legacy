@@ -28,6 +28,7 @@ import com.almuradev.guide.content.Page;
 import cpw.mods.fml.common.eventhandler.Event;
 
 public final class PageInformationEvent extends Event {
+
     public final Page page;
 
     public PageInformationEvent(Page page) {

@@ -40,6 +40,7 @@ import net.minecraft.server.MinecraftServer;
 import java.io.IOException;
 
 public class CommonProxy {
+
     public void onPreInitializationEvent(FMLPreInitializationEvent event) {
         Guide.NETWORK_FORGE.registerMessage(S00PageInformation.class, S00PageInformation.class, 0, Side.SERVER);
         Guide.NETWORK_FORGE.registerMessage(S00PageInformation.class, S00PageInformation.class, 0, Side.CLIENT);

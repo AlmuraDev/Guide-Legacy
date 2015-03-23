@@ -37,6 +37,7 @@ import net.minecraftforge.common.MinecraftForge;
 import java.io.IOException;
 
 public class ServerProxy extends CommonProxy {
+
     public static final String CLASSPATH = "com.almuradev.guide.server.ServerProxy";
 
     @Override
@@ -58,7 +59,7 @@ public class ServerProxy extends CommonProxy {
 
             Guide.NETWORK_FORGE.sendToAll(
                     new S00PageInformation(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(),
-                                           page.getLastContributor(), page.getContents()));
+                            page.getLastContributor(), page.getContents()));
 
         }
     }

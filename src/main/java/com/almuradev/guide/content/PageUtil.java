@@ -47,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 public class PageUtil {
+
     public static final Path PATH_CONFIG = Paths.get("config", Guide.MOD_ID);
     public static final Path PATH_PAGES = Paths.get(PATH_CONFIG.toString(), "pages");
     public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
@@ -76,6 +77,9 @@ public class PageUtil {
         }
     }
 
+    private PageUtil() {
+    }
+
     public static void loadAll() {
         PageRegistry.clearPages();
         PageUtil.loadPages(PageUtil.PATH_PAGES, FileSystem.FILTER_YAML_FILES_ONLY);
@@ -85,7 +89,8 @@ public class PageUtil {
     public static void loadPages(Path path, DirectoryStream.Filter<Path> filter) {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, filter)) {
             for (Path p : stream) {
-                final ConfigurationNode root = YAMLConfigurationLoader.builder().setFile(p.toFile()).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build().load();
+                final ConfigurationNode root =
+                        YAMLConfigurationLoader.builder().setFile(p.toFile()).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build().load();
                 try {
                     PageRegistry.putPage(createPage(p.getFileName().toString().replace(".yml", ""), root));
                 } catch (ParseException e) {
@@ -111,7 +116,8 @@ public class PageUtil {
     public static void savePage(String identifier, Page page) throws IOException {
         Path p = Paths.get(PATH_PAGES.toString(), identifier + ".yml");
         if (Files.exists(p)) {
-            final YAMLConfigurationLoader loader = YAMLConfigurationLoader.builder().setFile(p.toFile()).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build();
+            final YAMLConfigurationLoader loader =
+                    YAMLConfigurationLoader.builder().setFile(p.toFile()).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build();
             final ConfigurationNode root = loader.load();
             root.getChild("name").setValue(page.getName());
             root.getChild("created").setValue(DATE_FORMATTER.format(page.getCreated()));
@@ -134,7 +140,7 @@ public class PageUtil {
             //Replace color map -> char + charcode
             if (!toColorsList) {
                 rawText = rawText.replaceAll("" + c, colorCodeStart + "" + c.getChatCode());
-            //Replace char + charcode -> color map
+                //Replace char + charcode -> color map
             } else {
                 rawText = rawText.replaceAll(colorCodeStart + "" + c.getChatCode(), "" + c);
             }
@@ -142,6 +148,4 @@ public class PageUtil {
 
         return rawText;
     }
-
-    private PageUtil() {}
 }

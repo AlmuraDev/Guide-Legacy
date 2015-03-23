@@ -27,6 +27,7 @@ package com.almuradev.guide.content;
 import java.util.Date;
 
 public final class Page {
+
     private final String identifier;
     private Date created, lastModified;
     private String name, author, lastContributor, contents;
@@ -112,13 +113,13 @@ public final class Page {
     @Override
     public String toString() {
         return "Page { " +
-               "identifier= [" + identifier + "]" +
-               ", created= [" + created + "]" +
-               ", lastModified= [" + lastModified + "]" +
-               ", name= [" + name + "]" +
-               ", author= [" + author + "]" +
-               ", lastContributor= [" + lastContributor + "]" +
-               ", contents= [" + contents + "]" +
-               " }";
+                "identifier= [" + identifier + "]" +
+                ", created= [" + created + "]" +
+                ", lastModified= [" + lastModified + "]" +
+                ", name= [" + name + "]" +
+                ", author= [" + author + "]" +
+                ", lastContributor= [" + lastContributor + "]" +
+                ", contents= [" + contents + "]" +
+                " }";
     }
 }

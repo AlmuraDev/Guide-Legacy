@@ -29,6 +29,7 @@ import com.almuradev.almurasdk.permissions.PermissionsManager;
 import com.almuradev.guide.Guide;
 
 public class ClientPermissible implements Permissible {
+
     @Override
     public String getPermissibleModName() {
         return Guide.MOD_ID;

@@ -45,6 +45,10 @@ public class ClientProxy extends CommonProxy {
     public static final String CLASSPATH = "com.almuradev.guide.client.ClientProxy";
     public static final ClientPermissible PERMISSIBLE_CLIENT = new ClientPermissible();
 
+    public static Permissions getPermissions() {
+        return AlmuraSDK.getPermissionsManager().getPermissions(PERMISSIBLE_CLIENT);
+    }
+
     @Override
     public void onPreInitializationEvent(FMLPreInitializationEvent event) {
         super.onPreInitializationEvent(event);
@@ -65,9 +69,5 @@ public class ClientProxy extends CommonProxy {
         if (getPermissions().hasPermission("mod.guide.open") && Keyboard.isKeyDown(Keyboard.KEY_G)) {
             Minecraft.getMinecraft().displayGuiScreen(new GuideGui());
         }
-    }
-
-    public static Permissions getPermissions() {
-        return AlmuraSDK.getPermissionsManager().getPermissions(PERMISSIBLE_CLIENT);
     }
 }

@@ -35,9 +35,11 @@ import io.netty.buffer.ByteBuf;
  * Instructs a client to open a {@link Page} immediately.
  */
 public class S02PageOpen implements IMessage, IMessageHandler<S02PageOpen, IMessage> {
+
     public String identifier;
 
-    public S02PageOpen() {}
+    public S02PageOpen() {
+    }
 
     public S02PageOpen(String identifer) {
         this.identifier = identifer;
