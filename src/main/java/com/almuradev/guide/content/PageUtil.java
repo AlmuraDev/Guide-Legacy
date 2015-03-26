@@ -51,7 +51,6 @@ public class PageUtil {
     public static final Path PATH_CONFIG = Paths.get("config", Guide.MOD_ID);
     public static final Path PATH_PAGES = Paths.get(PATH_CONFIG.toString(), "pages");
     public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
-    public static final List<Color> COLORS;
 
     static {
         if (Files.notExists(PATH_PAGES)) {
@@ -60,19 +59,6 @@ public class PageUtil {
 
             } catch (Exception e) {
                 throw new RuntimeException("Failed to create pages directory!", e);
-            }
-        }
-
-        COLORS = new ArrayList<>();
-
-        final Field[] declaredFields = Colors.class.getDeclaredFields();
-        for (Field field : declaredFields) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                try {
-                    COLORS.add((Color) field.get(null));
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
             }
         }
     }
@@ -103,12 +89,12 @@ public class PageUtil {
     }
 
     public static Page createPage(String identifier, ConfigurationNode root) throws ParseException {
-        final String name = root.getChild("name").getString("No name");
-        final Date created = DATE_FORMATTER.parse(root.getChild("created").getString("1/1/1900"));
-        final String author = root.getChild("author").getString("Unknown");
-        final Date lastModified = DATE_FORMATTER.parse(root.getChild("last-modified").getString("1/1/1900"));
-        final String lastContributor = root.getChild("last-contributor").getString("Unknown");
-        final String contents = replaceColorCodes("&", root.getChild("contents").getString(""), true);
+        final String name = root.getNode("name").getString("No name");
+        final Date created = DATE_FORMATTER.parse(root.getNode("created").getString("1/1/1900"));
+        final String author = root.getNode("author").getString("Unknown");
+        final Date lastModified = DATE_FORMATTER.parse(root.getNode("last-modified").getString("1/1/1900"));
+        final String lastContributor = root.getNode("last-contributor").getString("Unknown");
+        final String contents = replaceColorCodes("&", root.getNode("contents").getString(""), true);
 
         return new Page(identifier, name, created, author, lastModified, lastContributor, contents);
     }
@@ -119,12 +105,12 @@ public class PageUtil {
             final YAMLConfigurationLoader loader =
                     YAMLConfigurationLoader.builder().setFile(p.toFile()).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build();
             final ConfigurationNode root = loader.load();
-            root.getChild("name").setValue(page.getName());
-            root.getChild("created").setValue(DATE_FORMATTER.format(page.getCreated()));
-            root.getChild("author").setValue(page.getAuthor());
-            root.getChild("last-modified").setValue(DATE_FORMATTER.format(page.getLastModified()));
-            root.getChild("last-contributor").setValue(page.getLastContributor());
-            root.getChild("contents").setValue(page.getContents());
+            root.getNode("name").setValue(page.getName());
+            root.getNode("created").setValue(DATE_FORMATTER.format(page.getCreated()));
+            root.getNode("author").setValue(page.getAuthor());
+            root.getNode("last-modified").setValue(DATE_FORMATTER.format(page.getLastModified()));
+            root.getNode("last-contributor").setValue(page.getLastContributor());
+            root.getNode("contents").setValue(page.getContents());
             loader.save(root);
         }
     }
@@ -136,7 +122,7 @@ public class PageUtil {
      * @return The replaced text
      */
     public static String replaceColorCodes(String colorCodeStart, String rawText, boolean toColorsList) {
-        for (Color c : COLORS) {
+        for (Color c : Colors.getBuiltinColors()) {
             //Replace color map -> char + charcode
             if (!toColorsList) {
                 rawText = rawText.replaceAll("" + c, colorCodeStart + "" + c.getChatCode());

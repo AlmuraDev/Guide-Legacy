@@ -31,9 +31,12 @@ import com.almuradev.almurasdk.util.Colors;
 import com.almuradev.guide.Guide;
 import com.almuradev.guide.client.ClientProxy;
 import com.almuradev.guide.content.Page;
+import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.content.PageUtil;
 import com.almuradev.guide.event.PageInformationEvent;
 import com.almuradev.guide.server.network.play.S00PageInformation;
+import com.google.common.base.Function;
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -50,16 +53,25 @@ import net.malisis.core.client.gui.component.interaction.UITextField;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 public class GuideGui extends SimpleGui {
 
     public static final Color CONTROL = new Color("control", 13158600);
+    public static final Function<Page, String> FUNCTION_LABEL_NAME = new Function<Page, String>() {
+        @Override
+        public String apply(Page page) {
+            return page.getName();
+        }
+    };
 
     private UISelect<Page> usPage;
     private UITextField utfContents;
     private UIButton ubtnFormat, ubtnCode, ubtnDelete, ubtnSave;
+
+    public GuideGui() {
+        construct();
+    }
 
     @Override
     public void construct() {
@@ -75,6 +87,7 @@ public class GuideGui extends SimpleGui {
         usPage.setAnchor(Anchor.TOP | Anchor.RIGHT);
         usPage.setPosition(-5, 5);
         usPage.setName("form.guide.select.page");
+        usPage.setLabelFunction(FUNCTION_LABEL_NAME);
         usPage.setColors(Colors.WHITE.getGuiColorCode(), usPage.getBgColor(), Colors.RED.getGuiColorCode(), usPage.getHoverBgColor(), Colors.WHITE
                 .getGuiColorCode(), usPage.getDisabledTextColor(), false);
         usPage.register(this);
@@ -198,7 +211,7 @@ public class GuideGui extends SimpleGui {
 
             PageUtil.loadAll();
 
-            final List<Page> options = populate();
+            final Set<Page> options = populate();
             usPage.setOptions(options);
 
             if (!options.isEmpty()) {
@@ -225,7 +238,7 @@ public class GuideGui extends SimpleGui {
                 break;
             case "form.guide.button.save":
                 if (usPage.getSelectedOption() != null) {
-                    final Page page = (Page) usPage.getSelectedOption().getKey();
+                    final Page page = usPage.getSelectedOption().getKey();
                     Guide.NETWORK_FORGE.sendToServer(
                             new S00PageInformation(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(),
                                     page.getLastContributor(), utfContents.getText()));
@@ -268,11 +281,7 @@ public class GuideGui extends SimpleGui {
         }
     }
 
-    /**
-     * TODO This must be re-written.
-     * @return
-     */
-    private List<Page> populate() {
-        return Collections.emptyList();
+    private Set<Page> populate() {
+        return Sets.newHashSet(PageRegistry.getAll().values());
     }
 }
