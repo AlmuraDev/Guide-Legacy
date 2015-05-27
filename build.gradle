@@ -32,7 +32,7 @@ ext.packaging = 'jar'
 ext.url = 'http://github.com/AlmuraDev/Guide'
 ext.organization = 'AlmuraDev'
 ext.minecraftVersion = '1.7.10'
-ext.forgeVersion = '10.13.2.1342'
+ext.forgeVersion = '10.13.3.1408'
 ext.guideVersion = '1'
 version = minecraftVersion + '-' + forgeVersion.substring(forgeVersion.size() - 4) + '-' + ext.guideVersion
 
@@ -54,12 +54,12 @@ repositories {
 
 minecraft {
     version = project.ext.minecraftVersion + '-' + project.ext.forgeVersion + '-' + project.ext.minecraftVersion
-    runDir = "run/"
     mappings = "stable_12"
+    runDir = "run/"
 }
 
 dependencies {
-    compile('com.almuradev:almurasdk:1.7.10-1342-1-SNAPSHOT:dev') {
+    compile('com.almuradev:almurasdk:1.7.10-1408-1-SNAPSHOT:dev') {
         transitive = true
     }
 }
