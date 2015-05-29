@@ -39,14 +39,16 @@ import java.util.Date;
  */
 public class S00PageInformation implements IMessage, IMessageHandler<S00PageInformation, IMessage> {
 
+    public int index;
     public String identifier, name, author, lastContributor, contents;
     public Date created, lastModified;
 
     public S00PageInformation() {
     }
 
-    public S00PageInformation(String identifier, String name, Date created, String author, Date lastModified, String lastContributor,
+    public S00PageInformation(int index, String identifier, String name, Date created, String author, Date lastModified, String lastContributor,
             String contents) {
+        this.index = index;
         this.identifier = identifier;
         this.name = name;
         this.created = created;
@@ -57,12 +59,13 @@ public class S00PageInformation implements IMessage, IMessageHandler<S00PageInfo
     }
 
     public S00PageInformation(Page page) {
-        this(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(), page.getLastContributor(),
-                page.getContents());
+        this(page.getIndex(), page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(),
+                page.getLastContributor(), page.getContents());
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
+        index = buf.readInt();
         identifier = ByteBufUtils.readUTF8String(buf);
         name = ByteBufUtils.readUTF8String(buf);
         created = new Date(buf.readLong());

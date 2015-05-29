@@ -58,8 +58,8 @@ public class ServerProxy extends CommonProxy {
             }
 
             Guide.NETWORK_FORGE.sendToAll(
-                    new S00PageInformation(page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(),
-                            page.getLastContributor(), page.getContents()));
+                    new S00PageInformation(page.getIndex(), page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(),
+                            page.getLastModified(), page.getLastContributor(), page.getContents()));
 
         }
     }

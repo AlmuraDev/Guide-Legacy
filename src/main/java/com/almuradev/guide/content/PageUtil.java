@@ -89,6 +89,7 @@ public class PageUtil {
     }
 
     public static Page createPage(String identifier, ConfigurationNode root) throws ParseException {
+        final int index = root.getNode("index").getInt(0);
         final String name = root.getNode("name").getString("No name");
         final Date created = DATE_FORMATTER.parse(root.getNode("created").getString("1/1/1900"));
         final String author = root.getNode("author").getString("Unknown");
@@ -96,7 +97,7 @@ public class PageUtil {
         final String lastContributor = root.getNode("last-contributor").getString("Unknown");
         final String contents = replaceColorCodes("&", root.getNode("contents").getString(""), true);
 
-        return new Page(identifier, name, created, author, lastModified, lastContributor, contents);
+        return new Page(index, identifier, name, created, author, lastModified, lastContributor, contents);
     }
 
     public static void savePage(String identifier, Page page) throws IOException {
@@ -105,6 +106,7 @@ public class PageUtil {
             final YAMLConfigurationLoader loader =
                     YAMLConfigurationLoader.builder().setFile(p.toFile()).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build();
             final ConfigurationNode root = loader.load();
+            root.getNode("index").setValue(page.getIndex());
             root.getNode("name").setValue(page.getName());
             root.getNode("created").setValue(DATE_FORMATTER.format(page.getCreated()));
             root.getNode("author").setValue(page.getAuthor());

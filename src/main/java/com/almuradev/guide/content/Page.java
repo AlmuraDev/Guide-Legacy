@@ -31,8 +31,10 @@ public final class Page {
     private final String identifier;
     private Date created, lastModified;
     private String name, author, lastContributor, contents;
+    private int index;
 
-    public Page(String identifier, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
+    public Page(int index, String identifier, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
+        this.index = index;
         this.identifier = identifier;
         this.name = name;
         this.created = created;
@@ -40,6 +42,10 @@ public final class Page {
         this.lastModified = lastModified;
         this.lastContributor = lastContributor;
         this.contents = contents;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public String getIdentifier() {
