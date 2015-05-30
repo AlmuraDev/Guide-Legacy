@@ -70,9 +70,12 @@ public class GuideMainGui extends SimpleGui {
 
     @Override
     public void construct() {
+        final int internalPadding = 2;
+        final int externalPadding = 4;
+
         guiscreenBackground = false;
 
-        final UIForm formGuide = new UIForm(this, 300, 200, "Guide");
+        final UIForm formGuide = new UIForm(this, 300, 225, "Guide");
         formGuide.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
         formGuide.setName("form.guide.main");
         formGuide.setColor(CONTROL.getGuiColorCode());
@@ -80,11 +83,12 @@ public class GuideMainGui extends SimpleGui {
 
         buttonStyled = new UIButton(this, "Styled");
         buttonStyled.setAnchor(Anchor.TOP | Anchor.LEFT);
-        buttonStyled.setPosition(2, 2);
+        buttonStyled.setPosition(externalPadding, externalPadding);
         buttonStyled.setSize(0, 12);
         buttonStyled.setName("form.guide.main.button.styled");
         buttonStyled.getFontRenderOptions().italic = true;
         buttonStyled.getHoveredFontRendererOptions().italic = true;
+        buttonStyled.setTooltip("Styles the page text");
         buttonStyled.register(this);
 
         buttonRaw = new UIButton(this, "</>");
@@ -92,11 +96,12 @@ public class GuideMainGui extends SimpleGui {
         buttonRaw.setPosition(getPaddedX(buttonStyled, 2), buttonStyled.getY());
         buttonRaw.setSize(0, 12);
         buttonRaw.setName("form.guide.main.button.raw");
+        buttonRaw.setTooltip("Shows the raw text behind the styled page");
         buttonRaw.register(this);
 
         selectPage = new UISelect<>(this, 140, populate());
         selectPage.setAnchor(Anchor.TOP | Anchor.RIGHT);
-        selectPage.setPosition(-2, 2);
+        selectPage.setPosition(-externalPadding, externalPadding);
         selectPage.setSize(130, 15);
         selectPage.setName("form.guide.main.select.page");
         selectPage.setLabelFunction(FUNCTION_LABEL_NAME);
@@ -112,27 +117,21 @@ public class GuideMainGui extends SimpleGui {
 
         buttonDetails = new UIButton(this, "?");
         buttonDetails.setAnchor(Anchor.TOP | Anchor.RIGHT);
-        buttonDetails.setPosition(getPaddedX(selectPage, 2, Anchor.RIGHT), 2);
+        buttonDetails.setPosition(getPaddedX(selectPage, 2, Anchor.RIGHT), externalPadding);
         buttonDetails.setSize(0, 15);
         buttonDetails.setName("form.guide.main.button.details");
         buttonDetails.getFontRenderOptions().color = Colors.GOLD.getGuiColorCode();
         buttonDetails.getFontRenderOptions().shadow = false;
+        buttonDetails.setTooltip("Details of this page");
         buttonDetails.register(this);
-
-        textFieldContents = new UITextField(this, true);
-        textFieldContents.setPosition(2, getPaddedY(buttonStyled, 2));
-        textFieldContents.setSize(296, 150);
-        textFieldContents.setOptions(Colors.GRAY.getGuiColorCode(), CONTROL.getGuiColorCode(), Colors.BLACK.getGuiColorCode());
-        textFieldContents.getFontRenderOptions().color = Colors.WHITE.getGuiColorCode();
-        textFieldContents.getFontRenderOptions().shadow = false;
-        textFieldContents.getScrollbar().setAutoHide(true);
 
         buttonDelete = new UIButton(this, "-");
         buttonDelete.setAnchor(Anchor.BOTTOM | Anchor.LEFT);
-        buttonDelete.setPosition(2, -2);
+        buttonDelete.setPosition(externalPadding, -externalPadding);
         buttonDelete.setName("form.guide.main.button.delete");
         buttonDelete.setVisible(false);
         buttonDelete.getFontRenderOptions().color = Colors.RED.getGuiColorCode();
+        buttonDelete.setTooltip("Delete this page");
         buttonDelete.register(this);
 
         buttonAdd = new UIButton(this, "+");
@@ -141,22 +140,32 @@ public class GuideMainGui extends SimpleGui {
         buttonAdd.setName("form.guide.main.button.add");
         buttonAdd.setVisible(false);
         buttonAdd.getFontRenderOptions().color = Colors.GREEN.getGuiColorCode();
+        buttonAdd.setTooltip("Add a new page");
         buttonAdd.register(this);
 
         buttonClose = new UIButton(this, "Close");
         buttonClose.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
-        buttonClose.setPosition(-2, -2);
+        buttonClose.setPosition(-externalPadding, -externalPadding);
         buttonClose.setSize(0, 15);
         buttonClose.setName("form.guide.main.button.close");
         buttonClose.register(this);
 
         buttonSave = new UIButton(this, "Save");
         buttonSave.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
-        buttonSave.setPosition(getPaddedX(buttonClose, 2, Anchor.RIGHT), -2);
-        buttonSave.setSize(0, 10);
+        buttonSave.setPosition(getPaddedX(buttonClose, 2, Anchor.RIGHT), -externalPadding);
+        buttonSave.setSize(0, 15);
         buttonSave.setName("form.guide.main.button.save");
         buttonSave.setVisible(false);
         buttonSave.register(this);
+
+        textFieldContents = new UITextField(this, true);
+        textFieldContents.setPosition(externalPadding, getPaddedY(buttonStyled, 2));
+        textFieldContents.setSize(formGuide.getWidth() - (externalPadding * 2), formGuide.getContentHeight() - textFieldContents.getY() -
+                externalPadding - (buttonClose.getHeight() * 2));
+        textFieldContents.setOptions(Colors.GRAY.getGuiColorCode(), CONTROL.getGuiColorCode(), Colors.BLACK.getGuiColorCode());
+        textFieldContents.getFontRenderOptions().color = Colors.WHITE.getGuiColorCode();
+        textFieldContents.getFontRenderOptions().shadow = false;
+        textFieldContents.getScrollbar().setAutoHide(true);
 
         formGuide.getContentContainer().add(buttonStyled, buttonRaw, selectPage, textFieldContents, buttonDetails, buttonDelete, buttonAdd,
                 buttonSave, buttonClose);

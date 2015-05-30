@@ -35,9 +35,11 @@ import net.malisis.core.client.gui.Anchor;
 import net.malisis.core.client.gui.component.decoration.UILabel;
 import net.malisis.core.client.gui.component.interaction.UIButton;
 import net.malisis.core.client.gui.component.interaction.UITextField;
+import net.minecraft.client.Minecraft;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class GuidePageGui extends SimpleGui {
 
@@ -60,26 +62,28 @@ public class GuidePageGui extends SimpleGui {
 
     @Override
     public void construct() {
+        final boolean isNewPage = page == null;
+        final int textFieldTopPadding = 1;
+        final int padding = 4;
+
         guiscreenBackground = false;
 
-        final UIForm form = new UIForm(this, 150, 195, "Guide");
+        final UIForm form = new UIForm(this, 150, 166, "Guide - " + (isNewPage ? "New Page" : page.getName()));
         form.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
         form.setName("form.guide.details");
         form.setColor(GuideMainGui.CONTROL.getGuiColorCode());
         form.setBackgroundAlpha(255);
-        
-        final boolean isNewPage = page == null;
 
         labelFileName = new UILabel(this, "File Name");
         labelFileName.setAnchor(Anchor.TOP | Anchor.LEFT);
-        labelFileName.setPosition(2, 4);
+        labelFileName.setPosition(padding, padding);
         labelFileName.getFontRenderOptions().shadow = false;
         labelFileName.setVisible(isNewPage);
 
         textFieldFileName = new UITextField(this, "");
         textFieldFileName.setAnchor(Anchor.TOP | Anchor.LEFT);
-        textFieldFileName.setPosition(2, getPaddedY(labelFileName, 1));
-        textFieldFileName.setSize(form.getWidth() - 4, 0);
+        textFieldFileName.setPosition(padding, getPaddedY(labelFileName, textFieldTopPadding));
+        textFieldFileName.setSize(form.getWidth() - (padding * 2), 0);
         textFieldFileName.setVisible(labelFileName.isVisible());
         textFieldFileName.setEditable(true);
 
@@ -88,98 +92,118 @@ public class GuidePageGui extends SimpleGui {
 
         labelIndex = new UILabel(this, "Index");
         labelIndex.setAnchor(Anchor.TOP | Anchor.LEFT);
-        labelIndex.setPosition(2, textFieldFileName.isVisible() ? getPaddedY(textFieldFileName, 4) : 4);
+        labelIndex.setPosition(padding, textFieldFileName.isVisible() ? getPaddedY(textFieldFileName, padding) : padding);
         labelIndex.getFontRenderOptions().shadow = false;
         labelIndex.setVisible(hasPermission);
 
         textFieldIndex = new UITextField(this, isNewPage ? "" : "" + page.getIndex());
         textFieldIndex.setAnchor(Anchor.TOP | Anchor.LEFT);
-        textFieldIndex.setPosition(2, getPaddedY(labelIndex, 1));
-        textFieldIndex.setSize(form.getWidth() - 4, 0);
+        textFieldIndex.setPosition(padding, getPaddedY(labelIndex, textFieldTopPadding));
+        textFieldIndex.setSize(form.getWidth() - 8, 0);
         textFieldIndex.setVisible(hasPermission);
 
         labelName = new UILabel(this, "Name");
         labelName.setAnchor(Anchor.TOP | Anchor.LEFT);
-        labelName.setPosition(2, textFieldIndex.isVisible() ? getPaddedY(textFieldIndex, 4) : 4);
+        labelName.setPosition(padding, textFieldIndex.isVisible() ? getPaddedY(textFieldIndex, padding) : padding);
         labelName.getFontRenderOptions().shadow = false;
 
         textFieldName = new UITextField(this, isNewPage ? "" : page.getName());
         textFieldName.setAnchor(Anchor.TOP | Anchor.LEFT);
-        textFieldName.setPosition(2, getPaddedY(labelName, 1));
-        textFieldName.setSize(form.getWidth() - 4, 0);
+        textFieldName.setPosition(padding, getPaddedY(labelName, textFieldTopPadding));
+        textFieldName.setSize(form.getWidth() - (padding * 2), 0);
         textFieldName.setEditable(hasPermission);
 
         labelCreated = new UILabel(this, "Created");
         labelCreated.setAnchor(Anchor.TOP | Anchor.LEFT);
-        labelCreated.setPosition(2, getPaddedY(textFieldName, 4));
+        labelCreated.setPosition(padding, getPaddedY(textFieldName, padding));
         labelCreated.getFontRenderOptions().shadow = false;
 
         textFieldCreated = new UITextField(this, isNewPage ? "" : dateFormat.format(page.getCreated()));
         textFieldCreated.setAnchor(Anchor.TOP | Anchor.LEFT);
-        textFieldCreated.setPosition(2, getPaddedY(labelCreated, 1));
-        textFieldCreated.setSize(form.getWidth() - 4, 0);
+        textFieldCreated.setPosition(padding, getPaddedY(labelCreated, textFieldTopPadding));
+        textFieldCreated.setSize(form.getWidth() - (padding * 2), 0);
         textFieldCreated.setEditable(hasPermission);
 
         labelAuthor = new UILabel(this, "Author");
         labelAuthor.setAnchor(Anchor.TOP | Anchor.LEFT);
-        labelAuthor.setPosition(2, getPaddedY(textFieldCreated, 4));
+        labelAuthor.setPosition(padding, getPaddedY(textFieldCreated, padding));
         labelAuthor.getFontRenderOptions().shadow = false;
 
         textFieldAuthor = new UITextField(this, isNewPage ? "" : page.getAuthor());
         textFieldAuthor.setAnchor(Anchor.TOP | Anchor.LEFT);
-        textFieldAuthor.setPosition(2, getPaddedY(labelAuthor, 1));
-        textFieldAuthor.setSize(form.getWidth() - 4, 0);
+        textFieldAuthor.setPosition(padding, getPaddedY(labelAuthor, textFieldTopPadding));
+        textFieldAuthor.setSize(form.getWidth() - (padding * 2), 0);
         textFieldAuthor.setEditable(hasPermission);
 
         labelLastModified = new UILabel(this, "Last Modified");
         labelLastModified.setAnchor(Anchor.TOP | Anchor.LEFT);
-        labelLastModified.setPosition(2, getPaddedY(textFieldAuthor, 4));
+        labelLastModified.setPosition(padding, getPaddedY(textFieldAuthor, padding));
         labelLastModified.getFontRenderOptions().shadow = false;
 
         textFieldLastModified = new UITextField(this, isNewPage ? "" : dateFormat.format(page.getLastModified()));
         textFieldLastModified.setAnchor(Anchor.TOP | Anchor.LEFT);
-        textFieldLastModified.setPosition(2, getPaddedY(labelLastModified, 1));
-        textFieldLastModified.setSize(form.getWidth() - 4, 0);
+        textFieldLastModified.setPosition(padding, getPaddedY(labelLastModified, textFieldTopPadding));
+        textFieldLastModified.setSize(form.getWidth() - (padding * 2), 0);
         textFieldLastModified.setEditable(hasPermission);
 
         labelLastContributor = new UILabel(this, "Last Contributor");
         labelLastContributor.setAnchor(Anchor.TOP | Anchor.LEFT);
-        labelLastContributor.setPosition(2, getPaddedY(textFieldLastModified, 4));
+        labelLastContributor.setPosition(padding, getPaddedY(textFieldLastModified, padding));
         labelLastContributor.getFontRenderOptions().shadow = false;
 
         textFieldLastContributor = new UITextField(this, isNewPage ? "" : page.getLastContributor());
         textFieldLastContributor.setAnchor(Anchor.TOP | Anchor.LEFT);
-        textFieldLastContributor.setPosition(2, getPaddedY(labelLastContributor, 1));
-        textFieldLastContributor.setSize(form.getWidth() - 4, 0);
+        textFieldLastContributor.setPosition(padding, getPaddedY(labelLastContributor, textFieldTopPadding));
+        textFieldLastContributor.setSize(form.getWidth() - (padding * 2), 0);
         textFieldLastContributor.setEditable(hasPermission);
 
         buttonClose = new UIButton(this, "Close");
         buttonClose.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
-        buttonClose.setPosition(-2, -2);
+        buttonClose.setPosition(-padding, -padding);
         buttonClose.setSize(0, 15);
         buttonClose.setName("form.guide.details.button.close");
         buttonClose.register(this);
 
         buttonSave = new UIButton(this, "Save");
         buttonSave.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
-        buttonSave.setPosition(getPaddedX(buttonClose, 2, Anchor.RIGHT), -2);
+        buttonSave.setPosition(getPaddedX(buttonClose, 2, Anchor.RIGHT), -padding);
         buttonSave.setSize(0, 10);
         buttonSave.setName("form.guide.details.button.save");
         buttonSave.setVisible(hasPermission);
         buttonSave.register(this);
 
         if (isNewPage) {
-            form.setHeight(215);
+            form.setHeight(218);
         } else if (labelIndex.isVisible()) {
-            form.setHeight(195);
+            form.setHeight(192);
         }
-        
+
+        populate(isNewPage);
 
         form.getContentContainer().add(labelFileName, textFieldFileName, labelIndex, textFieldIndex, labelName, textFieldName, labelCreated,
                 textFieldCreated, labelAuthor, textFieldAuthor, labelLastModified, textFieldLastModified, labelLastContributor,
                 textFieldLastContributor, buttonSave, buttonClose);
 
         addToScreen(form);
+    }
+
+    private void populate(boolean isNewPage) {
+        if (isNewPage) {
+            final String currentDate = dateFormat.format(new Date());
+            final String name = Minecraft.getMinecraft().thePlayer.getCommandSenderName();
+
+            textFieldCreated.setText(currentDate);
+            textFieldAuthor.setText(name);
+            textFieldLastModified.setText(currentDate);
+            textFieldLastContributor.setText(name);
+        } else {
+            textFieldIndex.setText("" + page.getIndex());
+            textFieldName.setText(page.getName());
+            textFieldCreated.setText(dateFormat.format(page.getCreated()));
+            textFieldAuthor.setText(page.getAuthor());
+            textFieldLastModified.setText(dateFormat.format(page.getLastModified()));
+            textFieldLastContributor.setText(page.getLastContributor());
+        }
     }
 
     @Subscribe
@@ -189,6 +213,13 @@ public class GuidePageGui extends SimpleGui {
                 close();
                 break;
             case "form.guide.details.button.save":
+                // TODO: Validate page contents before saving.
+                // Index: Must be a value >0
+                // Name: Must be between 1 and 200 characters
+                // Created: Must be a valid date format
+                // Author: Must be between 1 and 16 characters
+                // Last Modified: Must be a valid date format
+                // Last Contributor: Must be between 1 and 16 characters
                 if (page != null) {
                     Guide.NETWORK_FORGE.sendToServer(
                             new S00PageInformation(Integer.parseInt(textFieldIndex.getText()),
