@@ -231,8 +231,8 @@ public class GuidePageGui extends SimpleGui {
                 // Last Modified: Must be a valid date format
                 // Last Contributor: Must be between 1 and 16 characters
                 Guide.NETWORK_FORGE.sendToServer(
-                        new S00PageInformation(Integer.parseInt(textFieldIndex.getText()),
-                                page.getIdentifier(),
+                        new S00PageInformation(page.getIdentifier(),
+                                Integer.parseInt(textFieldIndex.getText()),
                                 textFieldName.getText(),
                                 dateFormat.parse(textFieldCreated.getText()),
                                 textFieldAuthor.getText(),

@@ -229,7 +229,7 @@ public class GuideMainGui extends SimpleGui {
                 if (selectPage.getSelectedOption() != null) {
                     final Page page = selectPage.getSelectedOption().getKey();
                     Guide.NETWORK_FORGE.sendToServer(
-                            new S00PageInformation(page.getIndex(), page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(),
+                            new S00PageInformation(page.getIdentifier(), page.getIndex(), page.getName(), page.getCreated(), page.getAuthor(),
                                     page.getLastModified(), page.getLastContributor(), textFieldContents.getText()));
                 }
                 break;

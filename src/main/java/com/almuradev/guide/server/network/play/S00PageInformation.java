@@ -46,10 +46,10 @@ public class S00PageInformation implements IMessage, IMessageHandler<S00PageInfo
     public S00PageInformation() {
     }
 
-    public S00PageInformation(int index, String identifier, String name, Date created, String author, Date lastModified, String lastContributor,
+    public S00PageInformation(String identifier, int index, String name, Date created, String author, Date lastModified, String lastContributor,
             String contents) {
-        this.index = index;
         this.identifier = identifier;
+        this.index = index;
         this.name = name;
         this.created = created;
         this.author = author;
@@ -59,14 +59,14 @@ public class S00PageInformation implements IMessage, IMessageHandler<S00PageInfo
     }
 
     public S00PageInformation(Page page) {
-        this(page.getIndex(), page.getIdentifier(), page.getName(), page.getCreated(), page.getAuthor(), page.getLastModified(),
-                page.getLastContributor(), page.getContents());
+        this(page.getIdentifier(), page.getIndex(), page.getName(), page.getCreated(), page.getAuthor(),
+                page.getLastModified(), page.getLastContributor(), page.getContents());
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        index = buf.readInt();
         identifier = ByteBufUtils.readUTF8String(buf);
+        index = buf.readInt();
         name = ByteBufUtils.readUTF8String(buf);
         created = new Date(buf.readLong());
         author = ByteBufUtils.readUTF8String(buf);
@@ -78,6 +78,7 @@ public class S00PageInformation implements IMessage, IMessageHandler<S00PageInfo
     @Override
     public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, identifier);
+        buf.writeInt(index);
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeLong(created.getTime());
         ByteBufUtils.writeUTF8String(buf, author);
