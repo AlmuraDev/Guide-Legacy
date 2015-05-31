@@ -75,11 +75,11 @@ public class GuideMainGui extends SimpleGui {
 
         guiscreenBackground = false;
 
-        final UIForm formGuide = new UIForm(this, 300, 225, "Guide");
-        formGuide.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
-        formGuide.setName("form.guide.main");
-        formGuide.setColor(CONTROL.getGuiColorCode());
-        formGuide.setBackgroundAlpha(255);
+        final UIForm form = new UIForm(this, 300, 225, "Guide");
+        form.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
+        form.setName("form.guide.main");
+        form.setColor(CONTROL.getGuiColorCode());
+        form.setBackgroundAlpha(255);
 
         buttonStyled = new UIButton(this, "Styled");
         buttonStyled.setAnchor(Anchor.TOP | Anchor.LEFT);
@@ -160,17 +160,17 @@ public class GuideMainGui extends SimpleGui {
 
         textFieldContents = new UITextField(this, true);
         textFieldContents.setPosition(externalPadding, getPaddedY(buttonStyled, 2));
-        textFieldContents.setSize(formGuide.getWidth() - (externalPadding * 2), formGuide.getContentHeight() - textFieldContents.getY() -
+        textFieldContents.setSize(form.getWidth() - (externalPadding * 2), form.getContentHeight() - textFieldContents.getY() -
                 externalPadding - (buttonClose.getHeight() * 2));
         textFieldContents.setOptions(Colors.GRAY.getGuiColorCode(), CONTROL.getGuiColorCode(), Colors.BLACK.getGuiColorCode());
         textFieldContents.getFontRenderOptions().color = Colors.WHITE.getGuiColorCode();
         textFieldContents.getFontRenderOptions().shadow = false;
         textFieldContents.getScrollbar().setAutoHide(true);
 
-        formGuide.getContentContainer().add(buttonStyled, buttonRaw, selectPage, textFieldContents, buttonDetails, buttonDelete, buttonAdd,
+        form.getContentContainer().add(buttonStyled, buttonRaw, selectPage, textFieldContents, buttonDetails, buttonDelete, buttonAdd,
                 buttonSave, buttonClose);
 
-        addToScreen(formGuide);
+        addToScreen(form);
 
         selectPage.selectFirst();
         MinecraftForge.EVENT_BUS.register(this);
