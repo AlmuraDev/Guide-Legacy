@@ -44,7 +44,7 @@ import java.util.Date;
 public class GuidePageGui extends SimpleGui {
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-    private final Page page;
+    private Page page;
     private UIButton buttonSave, buttonClose;
     private UILabel labelFileName, labelIndex, labelName, labelCreated, labelAuthor, labelLastModified, labelLastContributor;
     private UITextField textFieldFileName, textFieldIndex, textFieldName, textFieldCreated, textFieldAuthor, textFieldLastModified,
@@ -144,7 +144,6 @@ public class GuidePageGui extends SimpleGui {
         textFieldLastModified.setAnchor(Anchor.TOP | Anchor.LEFT);
         textFieldLastModified.setPosition(padding, getPaddedY(labelLastModified, textFieldTopPadding));
         textFieldLastModified.setSize(form.getWidth() - (padding * 2), 0);
-        textFieldLastModified.setEditable(hasPermission);
 
         labelLastContributor = new UILabel(this, "Last Contributor");
         labelLastContributor.setAnchor(Anchor.TOP | Anchor.LEFT);
@@ -155,7 +154,6 @@ public class GuidePageGui extends SimpleGui {
         textFieldLastContributor.setAnchor(Anchor.TOP | Anchor.LEFT);
         textFieldLastContributor.setPosition(padding, getPaddedY(labelLastContributor, textFieldTopPadding));
         textFieldLastContributor.setSize(form.getWidth() - (padding * 2), 0);
-        textFieldLastContributor.setEditable(hasPermission);
 
         buttonClose = new UIButton(this, "Close");
         buttonClose.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
@@ -213,6 +211,18 @@ public class GuidePageGui extends SimpleGui {
                 close();
                 break;
             case "form.guide.details.button.save":
+                if (page == null) {
+                    page = new Page(
+                            textFieldFileName.getText().replace(".yml", ""),
+                            Integer.parseInt(textFieldIndex.getText()),
+                            textFieldName.getText(),
+                            dateFormat.parse(textFieldCreated.getText()),
+                            textFieldAuthor.getText(),
+                            dateFormat.parse(textFieldLastModified.getText()),
+                            textFieldLastContributor.getText(),
+                            ""
+                    );
+                }
                 // TODO: Validate page contents before saving.
                 // Index: Must be a value >0
                 // Name: Must be between 1 and 200 characters
@@ -220,27 +230,15 @@ public class GuidePageGui extends SimpleGui {
                 // Author: Must be between 1 and 16 characters
                 // Last Modified: Must be a valid date format
                 // Last Contributor: Must be between 1 and 16 characters
-                if (page != null) {
-                    Guide.NETWORK_FORGE.sendToServer(
-                            new S00PageInformation(Integer.parseInt(textFieldIndex.getText()),
-                                    page.getIdentifier(),
-                                    textFieldName.getText(),
-                                    dateFormat.parse(textFieldCreated.getText()),
-                                    textFieldAuthor.getText(),
-                                    dateFormat.parse(textFieldLastModified.getText()),
-                                    textFieldLastContributor.getText(),
-                                    page.getContents()));
-                } else {
-                    Guide.NETWORK_FORGE.sendToServer(
-                            new S00PageInformation(Integer.parseInt(textFieldIndex.getText()),
-                                    textFieldFileName.getText(),
-                                    textFieldName.getText(),
-                                    dateFormat.parse(textFieldCreated.getText()),
-                                    textFieldAuthor.getText(),
-                                    dateFormat.parse(textFieldLastModified.getText()),
-                                    textFieldLastContributor.getText(),
-                                    ""));
-                }
+                Guide.NETWORK_FORGE.sendToServer(
+                        new S00PageInformation(Integer.parseInt(textFieldIndex.getText()),
+                                page.getIdentifier(),
+                                textFieldName.getText(),
+                                dateFormat.parse(textFieldCreated.getText()),
+                                textFieldAuthor.getText(),
+                                dateFormat.parse(textFieldLastModified.getText()),
+                                textFieldLastContributor.getText(),
+                                page.getContents()));
                 break;
         }
     }

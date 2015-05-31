@@ -33,9 +33,9 @@ public final class Page {
     private String name, author, lastContributor, contents;
     private int index;
 
-    public Page(int index, String identifier, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
-        this.index = index;
+    public Page(String identifier, int index, String name, Date created, String author, Date lastModified, String lastContributor, String contents) {
         this.identifier = identifier;
+        this.index = index;
         this.name = name;
         this.created = created;
         this.author = author;

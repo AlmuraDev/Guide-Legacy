@@ -89,15 +89,15 @@ public class PageUtil {
     }
 
     public static Page createPage(String identifier, ConfigurationNode root) throws ParseException {
-        final int index = root.getNode("index").getInt(0);
         final String name = root.getNode("name").getString("No name");
+        final int index = root.getNode("index").getInt(0);
         final Date created = DATE_FORMATTER.parse(root.getNode("created").getString("1/1/1900"));
         final String author = root.getNode("author").getString("Unknown");
         final Date lastModified = DATE_FORMATTER.parse(root.getNode("last-modified").getString("1/1/1900"));
         final String lastContributor = root.getNode("last-contributor").getString("Unknown");
         final String contents = replaceColorCodes("&", root.getNode("contents").getString(""), true);
 
-        return new Page(index, identifier, name, created, author, lastModified, lastContributor, contents);
+        return new Page(identifier, index, name, created, author, lastModified, lastContributor, contents);
     }
 
     public static void savePage(String identifier, Page page) throws IOException {
