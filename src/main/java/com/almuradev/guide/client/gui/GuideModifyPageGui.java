@@ -41,7 +41,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class GuidePageGui extends SimpleGui {
+public class GuideModifyPageGui extends SimpleGui {
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
     private Page page;
@@ -50,11 +50,11 @@ public class GuidePageGui extends SimpleGui {
     private UITextField textFieldFileName, textFieldIndex, textFieldName, textFieldCreated, textFieldAuthor, textFieldLastModified,
             textFieldLastContributor;
 
-    public GuidePageGui(GuideMainGui parent) {
+    public GuideModifyPageGui(GuideViewPagesGui parent) {
         this(parent, null);
     }
 
-    public GuidePageGui(GuideMainGui parent, Page page) {
+    public GuideModifyPageGui(GuideViewPagesGui parent, Page page) {
         super(parent);
         this.page = page;
         this.construct();
@@ -71,7 +71,7 @@ public class GuidePageGui extends SimpleGui {
         final UIForm form = new UIForm(this, 150, 166, "Guide - " + (isNewPage ? "New Page" : page.getName()));
         form.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
         form.setName("form.guide.details");
-        form.setColor(GuideMainGui.CONTROL.getGuiColorCode());
+        form.setColor(GuideViewPagesGui.CONTROL.getGuiColorCode());
         form.setBackgroundAlpha(255);
 
         labelFileName = new UILabel(this, "File Name");

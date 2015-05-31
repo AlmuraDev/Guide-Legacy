@@ -27,7 +27,7 @@ package com.almuradev.guide.client;
 import com.almuradev.almurasdk.AlmuraSDK;
 import com.almuradev.almurasdk.permissions.Permissions;
 import com.almuradev.guide.CommonProxy;
-import com.almuradev.guide.client.gui.GuideMainGui;
+import com.almuradev.guide.client.gui.GuideViewPagesGui;
 import com.almuradev.guide.content.Page;
 import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.event.PageInformationEvent;
@@ -67,7 +67,7 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent event) {
         if (getPermissions().hasPermission("mod.guide.open") && Keyboard.isKeyDown(Keyboard.KEY_G)) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuideMainGui());
+            Minecraft.getMinecraft().displayGuiScreen(new GuideViewPagesGui());
         }
     }
 }

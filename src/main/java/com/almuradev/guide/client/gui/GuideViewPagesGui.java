@@ -50,7 +50,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.Set;
 
-public class GuideMainGui extends SimpleGui {
+public class GuideViewPagesGui extends SimpleGui {
 
     public static final Color CONTROL = new Color("control", 13158600);
     public static final Function<Page, String> FUNCTION_LABEL_NAME = new Function<Page, String>() {
@@ -64,7 +64,7 @@ public class GuideMainGui extends SimpleGui {
     private UITextField textFieldContents;
     private UIButton buttonStyled, buttonRaw, buttonDetails, buttonDelete, buttonAdd, buttonClose, buttonSave;
 
-    public GuideMainGui() {
+    public GuideViewPagesGui() {
         construct();
     }
 
@@ -217,10 +217,10 @@ public class GuideMainGui extends SimpleGui {
                 textFieldContents.setText(PageUtil.replaceColorCodes("&", textFieldContents.getText(), false));
                 break;
             case "form.guide.main.button.details":
-                Minecraft.getMinecraft().displayGuiScreen(new GuidePageGui(this, selectPage.getSelectedValue()));
+                Minecraft.getMinecraft().displayGuiScreen(new GuideModifyPageGui(this, selectPage.getSelectedValue()));
                 break;
             case "form.guide.main.button.add":
-                Minecraft.getMinecraft().displayGuiScreen(new GuidePageGui(this));
+                Minecraft.getMinecraft().displayGuiScreen(new GuideModifyPageGui(this));
                 break;
             case "form.guide.main.button.close":
                 close();
