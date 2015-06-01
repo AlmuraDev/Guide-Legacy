@@ -30,7 +30,6 @@ import com.almuradev.guide.Guide;
 import com.almuradev.guide.client.ClientProxy;
 import com.almuradev.guide.client.network.play.C00PageInformation;
 import com.almuradev.guide.content.Page;
-import com.almuradev.guide.server.network.play.S00PageInformation;
 import com.google.common.base.Predicate;
 import com.google.common.eventbus.Subscribe;
 import cpw.mods.fml.relauncher.Side;
@@ -45,6 +44,7 @@ import java.text.SimpleDateFormat;
 
 @SideOnly(Side.CLIENT)
 public class ModifyPageGui extends SimpleGui {
+
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
     private Page page;
     private UIButton buttonSave, buttonClose;
@@ -205,6 +205,7 @@ public class ModifyPageGui extends SimpleGui {
     }
 
     private final class IntegerFilterPredicate implements Predicate<String> {
+
         @Override
         public boolean apply(String input) {
             final int rawIndex;
@@ -218,6 +219,7 @@ public class ModifyPageGui extends SimpleGui {
     }
 
     private final class StringLengthPredicate implements Predicate<String> {
+
         private final int min, max;
 
         private StringLengthPredicate(int min, int max) {

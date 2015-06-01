@@ -32,6 +32,7 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 
 public class S01PageDelete implements IMessage, IMessageHandler<S01PageDelete, IMessage> {
+
     public String identifier;
 
     public S01PageDelete() {

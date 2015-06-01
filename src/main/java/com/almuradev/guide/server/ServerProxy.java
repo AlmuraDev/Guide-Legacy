@@ -26,17 +26,8 @@ package com.almuradev.guide.server;
 
 import com.almuradev.guide.CommonProxy;
 import com.almuradev.guide.Guide;
-import com.almuradev.guide.content.Page;
-import com.almuradev.guide.content.PageRegistry;
-import com.almuradev.guide.content.PageUtil;
-import com.almuradev.guide.event.PageInformationEvent;
-import com.almuradev.guide.server.network.play.S00PageInformation;
 import com.almuradev.guide.server.network.play.S01PageDelete;
-import com.google.common.base.Optional;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.common.MinecraftForge;
-
-import java.io.IOException;
 
 public class ServerProxy extends CommonProxy {
 

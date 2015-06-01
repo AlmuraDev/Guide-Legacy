@@ -61,7 +61,7 @@ public class CommonProxy {
     public void handlePageInformation(MessageContext ctx, S00PageInformation message) {
     }
 
-    public void handlePageInformation(MessageContext ctx, C00PageInformation message){
+    public void handlePageInformation(MessageContext ctx, C00PageInformation message) {
         final Optional<Page> optPage = PageRegistry.getPage(message.identifier);
         final Page page;
 

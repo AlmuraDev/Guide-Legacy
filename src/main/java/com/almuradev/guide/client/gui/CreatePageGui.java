@@ -32,7 +32,6 @@ import com.almuradev.guide.client.network.play.C00PageInformation;
 import com.almuradev.guide.content.PageRegistry;
 import com.google.common.base.Predicate;
 import com.google.common.eventbus.Subscribe;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.malisis.core.client.gui.Anchor;
@@ -44,6 +43,7 @@ import java.text.ParseException;
 
 @SideOnly(Side.CLIENT)
 public class CreatePageGui extends SimpleGui {
+
     private UIButton buttonSave, buttonCancel;
     private UILabel labelFileName, labelIndex, labelTitle;
     private UITextField textFieldFileName, textFieldIndex, textFieldTitle;
@@ -145,6 +145,7 @@ public class CreatePageGui extends SimpleGui {
     }
 
     private final class IntegerFilterPredicate implements Predicate<String> {
+
         @Override
         public boolean apply(String input) {
             final int rawIndex;
@@ -158,6 +159,7 @@ public class CreatePageGui extends SimpleGui {
     }
 
     private final class StringLengthPredicate implements Predicate<String> {
+
         private final int min, max;
 
         private StringLengthPredicate(int min, int max) {

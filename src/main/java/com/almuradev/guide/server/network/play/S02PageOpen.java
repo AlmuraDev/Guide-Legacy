@@ -26,13 +26,11 @@ package com.almuradev.guide.server.network.play;
 
 import com.almuradev.guide.Guide;
 import com.almuradev.guide.content.Page;
-import com.almuradev.guide.content.PageRegistry;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
 
 /**
  * Instructs a client to open a {@link Page} immediately.
@@ -55,7 +53,7 @@ public class S02PageOpen implements IMessage, IMessageHandler<S02PageOpen, IMess
 
     @Override
     public void toBytes(ByteBuf buf) {
-         ByteBufUtils.writeUTF8String(buf, identifier);
+        ByteBufUtils.writeUTF8String(buf, identifier);
     }
 
     @Override
