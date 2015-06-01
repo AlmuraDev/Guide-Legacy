@@ -31,7 +31,9 @@ import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.content.PageUtil;
 import com.almuradev.guide.event.PageInformationEvent;
 import com.almuradev.guide.server.network.play.S00PageInformation;
+import com.almuradev.guide.server.network.play.S01PageDelete;
 import com.google.common.base.Optional;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.io.IOException;
@@ -41,26 +43,14 @@ public class ServerProxy extends CommonProxy {
     public static final String CLASSPATH = "com.almuradev.guide.server.ServerProxy";
 
     @Override
-    public void handlePageInformation(S00PageInformation packet) {
-        super.handlePageInformation(packet);
+    public void handlePageDelete(MessageContext ctx, S01PageDelete message) {
+        super.handlePageDelete(ctx, message);
 
-        final Optional<Page> optPage = PageRegistry.getPage(packet.identifier);
+        Guide.NETWORK_FORGE.sendToAll(new S01PageDelete(message.identifier));
+    }
 
-        if (optPage.isPresent()) {
-            final Page page = optPage.get();
-
-            MinecraftForge.EVENT_BUS.post(new PageInformationEvent(page));
-
-            try {
-                PageUtil.savePage(packet.identifier, page);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Guide.NETWORK_FORGE.sendToAll(
-                    new S00PageInformation(page.getIdentifier(), page.getIndex(), page.getName(), page.getCreated(), page.getAuthor(),
-                            page.getLastModified(), page.getLastContributor(), page.getContents()));
-
-        }
+    @Override
+    public boolean canSavePages() {
+        return true;
     }
 }

@@ -30,11 +30,13 @@ import com.almuradev.almurasdk.util.Color;
 import com.almuradev.almurasdk.util.Colors;
 import com.almuradev.guide.Guide;
 import com.almuradev.guide.client.ClientProxy;
+import com.almuradev.guide.client.network.play.C00PageInformation;
 import com.almuradev.guide.content.Page;
 import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.content.PageUtil;
 import com.almuradev.guide.event.PageInformationEvent;
 import com.almuradev.guide.server.network.play.S00PageInformation;
+import com.almuradev.guide.server.network.play.S01PageDelete;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
@@ -50,7 +52,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.Set;
 
-public class GuideViewPagesGui extends SimpleGui {
+public class ViewPagesGui extends SimpleGui {
 
     public static final Color CONTROL = new Color("control", 13158600);
     public static final Function<Page, String> FUNCTION_LABEL_NAME = new Function<Page, String>() {
@@ -64,7 +66,7 @@ public class GuideViewPagesGui extends SimpleGui {
     private UITextField textFieldContents;
     private UIButton buttonStyled, buttonRaw, buttonDetails, buttonDelete, buttonAdd, buttonClose, buttonSave;
 
-    public GuideViewPagesGui() {
+    public ViewPagesGui() {
         construct();
     }
 
@@ -129,7 +131,7 @@ public class GuideViewPagesGui extends SimpleGui {
         buttonDelete.setAnchor(Anchor.BOTTOM | Anchor.LEFT);
         buttonDelete.setPosition(externalPadding, -externalPadding);
         buttonDelete.setName("form.guide.main.button.delete");
-        buttonDelete.setVisible(false);
+        buttonDelete.setVisible(true);
         buttonDelete.getFontRenderOptions().color = Colors.RED.getGuiColorCode();
         buttonDelete.setTooltip("Delete this page");
         buttonDelete.register(this);
@@ -138,7 +140,7 @@ public class GuideViewPagesGui extends SimpleGui {
         buttonAdd.setAnchor(Anchor.BOTTOM | Anchor.LEFT);
         buttonAdd.setPosition(getPaddedX(buttonDelete, 2), buttonDelete.getY());
         buttonAdd.setName("form.guide.main.button.add");
-        buttonAdd.setVisible(false);
+        buttonAdd.setVisible(true);
         buttonAdd.getFontRenderOptions().color = Colors.GREEN.getGuiColorCode();
         buttonAdd.setTooltip("Add a new page");
         buttonAdd.register(this);
@@ -217,10 +219,13 @@ public class GuideViewPagesGui extends SimpleGui {
                 textFieldContents.setText(PageUtil.replaceColorCodes("&", textFieldContents.getText(), false));
                 break;
             case "form.guide.main.button.details":
-                Minecraft.getMinecraft().displayGuiScreen(new GuideModifyPageGui(this, selectPage.getSelectedValue()));
+                Minecraft.getMinecraft().displayGuiScreen(new ModifyPageGui(this, selectPage.getSelectedValue()));
                 break;
             case "form.guide.main.button.add":
-                Minecraft.getMinecraft().displayGuiScreen(new GuideModifyPageGui(this));
+                Minecraft.getMinecraft().displayGuiScreen(new ModifyPageGui(this));
+                break;
+            case "form.guide.main.button.delete":
+                Guide.NETWORK_FORGE.sendToServer(new S01PageDelete(selectPage.getSelectedOption().getKey().getIdentifier()));
                 break;
             case "form.guide.main.button.close":
                 close();
@@ -229,8 +234,7 @@ public class GuideViewPagesGui extends SimpleGui {
                 if (selectPage.getSelectedOption() != null) {
                     final Page page = selectPage.getSelectedOption().getKey();
                     Guide.NETWORK_FORGE.sendToServer(
-                            new S00PageInformation(page.getIdentifier(), page.getIndex(), page.getName(), page.getCreated(), page.getAuthor(),
-                                    page.getLastModified(), page.getLastContributor(), textFieldContents.getText()));
+                            new C00PageInformation(page.getIdentifier(), page.getIndex(), page.getName(), textFieldContents.getText()));
                 }
                 break;
 

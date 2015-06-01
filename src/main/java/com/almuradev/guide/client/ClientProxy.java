@@ -27,16 +27,20 @@ package com.almuradev.guide.client;
 import com.almuradev.almurasdk.AlmuraSDK;
 import com.almuradev.almurasdk.permissions.Permissions;
 import com.almuradev.guide.CommonProxy;
-import com.almuradev.guide.client.gui.GuideViewPagesGui;
+import com.almuradev.guide.client.gui.ViewPagesGui;
 import com.almuradev.guide.content.Page;
 import com.almuradev.guide.content.PageRegistry;
+import com.almuradev.guide.event.PageDeleteEvent;
 import com.almuradev.guide.event.PageInformationEvent;
 import com.almuradev.guide.server.network.play.S00PageInformation;
+import com.almuradev.guide.server.network.play.S01PageDelete;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
@@ -57,17 +61,33 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void handlePageInformation(S00PageInformation packet) {
-        super.handlePageInformation(packet);
+    public void handlePageInformation(MessageContext ctx, S00PageInformation message) {
+        Page page = PageRegistry.getPage(message.identifier).orNull();
 
-        final Page page = PageRegistry.getPage(packet.identifier).get();
+        if (page == null) {
+            page = new Page(message.identifier, message.index, message.title, message.created, message.author,
+                    message.lastModified, message.lastContributor, message.contents);
+            PageRegistry.putPage(page);
+        }
         MinecraftForge.EVENT_BUS.post(new PageInformationEvent(page));
+    }
+
+    @Override
+    public void handlePageDelete(MessageContext ctx, S01PageDelete message) {
+        super.handlePageDelete(ctx, message);
+
+        MinecraftForge.EVENT_BUS.post(new PageDeleteEvent(message.identifier));
+    }
+
+    @Override
+    public boolean canSavePages() {
+        return FMLCommonHandler.instance().getEffectiveSide().isServer() && !MinecraftServer.getServer().isDedicatedServer();
     }
 
     @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent event) {
         if (getPermissions().hasPermission("mod.guide.open") && Keyboard.isKeyDown(Keyboard.KEY_G)) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuideViewPagesGui());
+            Minecraft.getMinecraft().displayGuiScreen(new ViewPagesGui());
         }
     }
 }

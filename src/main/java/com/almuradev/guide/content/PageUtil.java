@@ -63,7 +63,7 @@ public class PageUtil {
     }
 
     public static void loadAll() {
-        PageRegistry.clearPages();
+        PageRegistry.clear();
         PageUtil.loadPages(PageUtil.PATH_PAGES, FileSystem.FILTER_YAML_FILES_ONLY);
         Guide.LOGGER.info("Loaded [" + PageRegistry.getAll().size() + "] page(s).");
     }
@@ -85,7 +85,7 @@ public class PageUtil {
     }
 
     public static Page createPage(String identifier, ConfigurationNode root) throws ParseException {
-        final String name = root.getNode("name").getString("No name");
+        final String name = root.getNode("title").getString("No title");
         final int index = root.getNode("index").getInt(0);
         final Date created = DATE_FORMATTER.parse(root.getNode("created").getString("1/1/1900"));
         final String author = root.getNode("author").getString("Unknown");
@@ -97,20 +97,25 @@ public class PageUtil {
     }
 
     public static void savePage(String identifier, Page page) throws IOException {
-        Path p = Paths.get(PATH_PAGES.toString(), identifier + ".yml");
-        if (Files.exists(p)) {
-            final YAMLConfigurationLoader loader =
-                    YAMLConfigurationLoader.builder().setFile(p.toFile()).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build();
-            final ConfigurationNode root = loader.load();
-            root.getNode("index").setValue(page.getIndex());
-            root.getNode("name").setValue(page.getName());
-            root.getNode("created").setValue(DATE_FORMATTER.format(page.getCreated()));
-            root.getNode("author").setValue(page.getAuthor());
-            root.getNode("last-modified").setValue(DATE_FORMATTER.format(page.getLastModified()));
-            root.getNode("last-contributor").setValue(page.getLastContributor());
-            root.getNode("contents").setValue(page.getContents());
-            loader.save(root);
+        final Path p = Paths.get(PATH_PAGES.toString(), identifier + ".yml");
+        if (Files.notExists(p)) {
+            Files.createFile(p);
         }
+        final YAMLConfigurationLoader loader =
+                YAMLConfigurationLoader.builder().setFile(p.toFile()).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build();
+        final ConfigurationNode root = loader.load();
+        root.getNode("index").setValue(page.getIndex());
+        root.getNode("title").setValue(page.getName());
+        root.getNode("created").setValue(DATE_FORMATTER.format(page.getCreated()));
+        root.getNode("author").setValue(page.getAuthor());
+        root.getNode("last-modified").setValue(DATE_FORMATTER.format(page.getLastModified()));
+        root.getNode("last-contributor").setValue(page.getLastContributor());
+        root.getNode("contents").setValue(page.getContents());
+        loader.save(root);
+    }
+
+    public static void deletePage(String identifier) throws IOException {
+        Files.deleteIfExists(Paths.get(PATH_PAGES.toString(), identifier + ".yml"));
     }
 
     /**

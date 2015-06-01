@@ -48,6 +48,11 @@ public final class Page {
         return index;
     }
 
+    public Page setIndex(int index) {
+        this.index = index;
+        return this;
+    }
+
     public String getIdentifier() {
         return identifier;
     }
@@ -122,7 +127,7 @@ public final class Page {
                 "identifier= [" + identifier + "]" +
                 ", created= [" + created + "]" +
                 ", lastModified= [" + lastModified + "]" +
-                ", name= [" + name + "]" +
+                ", title= [" + name + "]" +
                 ", author= [" + author + "]" +
                 ", lastContributor= [" + lastContributor + "]" +
                 ", contents= [" + contents + "]" +

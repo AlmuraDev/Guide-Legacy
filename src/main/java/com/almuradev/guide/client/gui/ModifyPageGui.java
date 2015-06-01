@@ -28,8 +28,10 @@ import com.almuradev.almurasdk.client.gui.SimpleGui;
 import com.almuradev.almurasdk.client.gui.components.UIForm;
 import com.almuradev.guide.Guide;
 import com.almuradev.guide.client.ClientProxy;
+import com.almuradev.guide.client.network.play.C00PageInformation;
 import com.almuradev.guide.content.Page;
 import com.almuradev.guide.server.network.play.S00PageInformation;
+import com.google.common.base.Predicate;
 import com.google.common.eventbus.Subscribe;
 import net.malisis.core.client.gui.Anchor;
 import net.malisis.core.client.gui.component.decoration.UILabel;
@@ -41,8 +43,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class GuideModifyPageGui extends SimpleGui {
-
+public class ModifyPageGui extends SimpleGui {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
     private Page page;
     private UIButton buttonSave, buttonClose;
@@ -50,11 +51,11 @@ public class GuideModifyPageGui extends SimpleGui {
     private UITextField textFieldFileName, textFieldIndex, textFieldName, textFieldCreated, textFieldAuthor, textFieldLastModified,
             textFieldLastContributor;
 
-    public GuideModifyPageGui(GuideViewPagesGui parent) {
+    public ModifyPageGui(ViewPagesGui parent) {
         this(parent, null);
     }
 
-    public GuideModifyPageGui(GuideViewPagesGui parent, Page page) {
+    public ModifyPageGui(ViewPagesGui parent, Page page) {
         super(parent);
         this.page = page;
         this.construct();
@@ -71,7 +72,7 @@ public class GuideModifyPageGui extends SimpleGui {
         final UIForm form = new UIForm(this, 150, 166, "Guide - " + (isNewPage ? "New Page" : page.getName()));
         form.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
         form.setName("form.guide.details");
-        form.setColor(GuideViewPagesGui.CONTROL.getGuiColorCode());
+        form.setColor(ViewPagesGui.CONTROL.getGuiColorCode());
         form.setBackgroundAlpha(255);
 
         labelFileName = new UILabel(this, "File Name");
@@ -101,6 +102,10 @@ public class GuideModifyPageGui extends SimpleGui {
         textFieldIndex.setPosition(padding, getPaddedY(labelIndex, textFieldTopPadding));
         textFieldIndex.setSize(form.getWidth() - 8, 0);
         textFieldIndex.setVisible(hasPermission);
+        if (hasPermission) {
+            textFieldIndex.setTooltip("Value must be equal to or greater than 0.");
+        }
+        textFieldIndex.setValidator(new IntegerFilterPredicate());
 
         labelName = new UILabel(this, "Name");
         labelName.setAnchor(Anchor.TOP | Anchor.LEFT);
@@ -111,7 +116,11 @@ public class GuideModifyPageGui extends SimpleGui {
         textFieldName.setAnchor(Anchor.TOP | Anchor.LEFT);
         textFieldName.setPosition(padding, getPaddedY(labelName, textFieldTopPadding));
         textFieldName.setSize(form.getWidth() - (padding * 2), 0);
+        if (hasPermission) {
+            textFieldName.setTooltip("Name must not be greater than 100 characters.");
+        }
         textFieldName.setEditable(hasPermission);
+        textFieldName.setValidator(new StringLengthPredicate(1, 100));
 
         labelCreated = new UILabel(this, "Created");
         labelCreated.setAnchor(Anchor.TOP | Anchor.LEFT);
@@ -122,7 +131,7 @@ public class GuideModifyPageGui extends SimpleGui {
         textFieldCreated.setAnchor(Anchor.TOP | Anchor.LEFT);
         textFieldCreated.setPosition(padding, getPaddedY(labelCreated, textFieldTopPadding));
         textFieldCreated.setSize(form.getWidth() - (padding * 2), 0);
-        textFieldCreated.setEditable(hasPermission);
+        textFieldCreated.setEditable(false);
 
         labelAuthor = new UILabel(this, "Author");
         labelAuthor.setAnchor(Anchor.TOP | Anchor.LEFT);
@@ -133,7 +142,7 @@ public class GuideModifyPageGui extends SimpleGui {
         textFieldAuthor.setAnchor(Anchor.TOP | Anchor.LEFT);
         textFieldAuthor.setPosition(padding, getPaddedY(labelAuthor, textFieldTopPadding));
         textFieldAuthor.setSize(form.getWidth() - (padding * 2), 0);
-        textFieldAuthor.setEditable(hasPermission);
+        textFieldAuthor.setEditable(false);
 
         labelLastModified = new UILabel(this, "Last Modified");
         labelLastModified.setAnchor(Anchor.TOP | Anchor.LEFT);
@@ -143,6 +152,7 @@ public class GuideModifyPageGui extends SimpleGui {
         textFieldLastModified = new UITextField(this, isNewPage ? "" : dateFormat.format(page.getLastModified()));
         textFieldLastModified.setAnchor(Anchor.TOP | Anchor.LEFT);
         textFieldLastModified.setPosition(padding, getPaddedY(labelLastModified, textFieldTopPadding));
+        textFieldLastModified.setEditable(false);
         textFieldLastModified.setSize(form.getWidth() - (padding * 2), 0);
 
         labelLastContributor = new UILabel(this, "Last Contributor");
@@ -154,6 +164,7 @@ public class GuideModifyPageGui extends SimpleGui {
         textFieldLastContributor.setAnchor(Anchor.TOP | Anchor.LEFT);
         textFieldLastContributor.setPosition(padding, getPaddedY(labelLastContributor, textFieldTopPadding));
         textFieldLastContributor.setSize(form.getWidth() - (padding * 2), 0);
+        textFieldLastContributor.setEditable(false);
 
         buttonClose = new UIButton(this, "Close");
         buttonClose.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
@@ -211,35 +222,38 @@ public class GuideModifyPageGui extends SimpleGui {
                 close();
                 break;
             case "form.guide.details.button.save":
-                if (page == null) {
-                    page = new Page(
-                            textFieldFileName.getText().replace(".yml", ""),
-                            Integer.parseInt(textFieldIndex.getText()),
-                            textFieldName.getText(),
-                            dateFormat.parse(textFieldCreated.getText()),
-                            textFieldAuthor.getText(),
-                            dateFormat.parse(textFieldLastModified.getText()),
-                            textFieldLastContributor.getText(),
-                            ""
-                    );
-                }
-                // TODO: Validate page contents before saving.
-                // Index: Must be a value >0
-                // Name: Must be between 1 and 200 characters
-                // Created: Must be a valid date format
-                // Author: Must be between 1 and 16 characters
-                // Last Modified: Must be a valid date format
-                // Last Contributor: Must be between 1 and 16 characters
                 Guide.NETWORK_FORGE.sendToServer(
-                        new S00PageInformation(page.getIdentifier(),
+                        new C00PageInformation(textFieldFileName.getText().replace(".yml", ""),
                                 Integer.parseInt(textFieldIndex.getText()),
-                                textFieldName.getText(),
-                                dateFormat.parse(textFieldCreated.getText()),
-                                textFieldAuthor.getText(),
-                                dateFormat.parse(textFieldLastModified.getText()),
-                                textFieldLastContributor.getText(),
-                                page.getContents()));
+                                textFieldName.getText(), ""));
                 break;
+        }
+    }
+
+    private final class IntegerFilterPredicate implements Predicate<String> {
+        @Override
+        public boolean apply(String input) {
+            final int rawIndex;
+            try {
+                rawIndex = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+            return rawIndex > 0 && rawIndex < Integer.MAX_VALUE;
+        }
+    }
+
+    private final class StringLengthPredicate implements Predicate<String> {
+        private final int min, max;
+
+        private StringLengthPredicate(int min, int max) {
+            this.min = min;
+            this.max = max;
+        }
+
+        @Override
+        public boolean apply(String input) {
+            return input.length() >= min && input.length() <= max;
         }
     }
 }

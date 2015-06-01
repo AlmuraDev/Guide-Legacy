@@ -43,6 +43,7 @@ public class ClientPermissible implements Permissible {
     @Override
     public void registerPermissions(PermissionsManager permissionsManager) {
         permissionsManager.registerModPermission(this, "open");
+        permissionsManager.registerModPermission(this, "create");
     }
 
     @Override

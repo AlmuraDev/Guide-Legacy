@@ -40,17 +40,17 @@ import java.util.Date;
 public class S00PageInformation implements IMessage, IMessageHandler<S00PageInformation, IMessage> {
 
     public int index;
-    public String identifier, name, author, lastContributor, contents;
+    public String identifier, title, author, lastContributor, contents;
     public Date created, lastModified;
 
     public S00PageInformation() {
     }
 
-    public S00PageInformation(String identifier, int index, String name, Date created, String author, Date lastModified, String lastContributor,
+    public S00PageInformation(String identifier, int index, String title, Date created, String author, Date lastModified, String lastContributor,
             String contents) {
         this.identifier = identifier;
         this.index = index;
-        this.name = name;
+        this.title = title;
         this.created = created;
         this.author = author;
         this.lastModified = lastModified;
@@ -67,7 +67,7 @@ public class S00PageInformation implements IMessage, IMessageHandler<S00PageInfo
     public void fromBytes(ByteBuf buf) {
         identifier = ByteBufUtils.readUTF8String(buf);
         index = buf.readInt();
-        name = ByteBufUtils.readUTF8String(buf);
+        title = ByteBufUtils.readUTF8String(buf);
         created = new Date(buf.readLong());
         author = ByteBufUtils.readUTF8String(buf);
         lastModified = new Date(buf.readLong());
@@ -79,7 +79,7 @@ public class S00PageInformation implements IMessage, IMessageHandler<S00PageInfo
     public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, identifier);
         buf.writeInt(index);
-        ByteBufUtils.writeUTF8String(buf, name);
+        ByteBufUtils.writeUTF8String(buf, title);
         buf.writeLong(created.getTime());
         ByteBufUtils.writeUTF8String(buf, author);
         buf.writeLong(lastModified.getTime());
@@ -89,7 +89,9 @@ public class S00PageInformation implements IMessage, IMessageHandler<S00PageInfo
 
     @Override
     public IMessage onMessage(S00PageInformation message, MessageContext ctx) {
-        Guide.PROXY.handlePageInformation(message);
+        if (ctx.side.isClient()) {
+            Guide.PROXY.handlePageInformation(ctx, message);
+        }
         return null;
     }
 }

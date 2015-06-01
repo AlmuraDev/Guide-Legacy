@@ -24,11 +24,8 @@
  */
 package com.almuradev.guide.content;
 
-import com.almuradev.guide.server.network.play.S02PageOpen;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 import java.util.Collections;
 import java.util.Map;
@@ -45,15 +42,15 @@ public class PageRegistry {
         return PAGES.put(page.getIdentifier(), page);
     }
 
+    public static Optional<Page> removePage(String identifier) {
+        return Optional.fromNullable(PAGES.remove(identifier));
+    }
+
     public static Map<String, Page> getAll() {
         return Collections.unmodifiableMap(PAGES);
     }
 
-    public static void clearPages() {
+    public static void clear() {
         PAGES.clear();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void handlePageOpen(S02PageOpen packet) {
     }
 }

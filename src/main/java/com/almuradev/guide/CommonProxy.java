@@ -24,27 +24,31 @@
  */
 package com.almuradev.guide;
 
+import com.almuradev.guide.client.network.play.C00PageInformation;
 import com.almuradev.guide.content.Page;
 import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.content.PageUtil;
 import com.almuradev.guide.server.network.play.S00PageInformation;
+import com.almuradev.guide.server.network.play.S01PageDelete;
 import com.almuradev.guide.server.network.play.S02PageOpen;
 import com.google.common.base.Optional;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.server.MinecraftServer;
 
 import java.io.IOException;
+import java.util.Date;
 
 public class CommonProxy {
 
     public void onPreInitializationEvent(FMLPreInitializationEvent event) {
-        Guide.NETWORK_FORGE.registerMessage(S00PageInformation.class, S00PageInformation.class, 0, Side.SERVER);
         Guide.NETWORK_FORGE.registerMessage(S00PageInformation.class, S00PageInformation.class, 0, Side.CLIENT);
-        Guide.NETWORK_FORGE.registerMessage(S02PageOpen.class, S02PageOpen.class, 1, Side.CLIENT);
+        Guide.NETWORK_FORGE.registerMessage(C00PageInformation.class, C00PageInformation.class, 0, Side.SERVER);
+        Guide.NETWORK_FORGE.registerMessage(S01PageDelete.class, S01PageDelete.class, 1, Side.CLIENT);
+        Guide.NETWORK_FORGE.registerMessage(S01PageDelete.class, S01PageDelete.class, 1, Side.SERVER);
+        Guide.NETWORK_FORGE.registerMessage(S02PageOpen.class, S02PageOpen.class, 2, Side.CLIENT);
     }
 
     public void onInitialization(FMLInitializationEvent event) {
@@ -54,27 +58,63 @@ public class CommonProxy {
         PageUtil.loadAll();
     }
 
-    public void handlePageInformation(S00PageInformation packet) {
-        final Optional<Page> optPage = PageRegistry.getPage(packet.identifier);
+    public void handlePageInformation(MessageContext ctx, S00PageInformation message) {
+    }
+
+    public void handlePageInformation(MessageContext ctx, C00PageInformation message){
+        final Optional<Page> optPage = PageRegistry.getPage(message.identifier);
+        final Page page;
 
         if (optPage.isPresent()) {
-            final Page page = optPage.get();
+            page = optPage.get();
+            page
+                    .setIndex(message.index)
+                    .setLastContributor(ctx.getServerHandler().playerEntity.getCommandSenderName())
+                    .setLastModified(new Date())
+                    .setName(message.title)
+                    .setContents(PageUtil.replaceColorCodes("&", message.contents, true));
+        } else {
+            // String identifier, int index, String name, Date created, String author, Date lastModified, String lastContributor, String contents
+            page = new Page(message.identifier, message.index, message.title, new Date(),
+                    ctx.getServerHandler().playerEntity.getCommandSenderName(), new Date(),
+                    ctx.getServerHandler().playerEntity.getCommandSenderName(), message.contents);
+            PageRegistry.putPage(page);
+        }
 
-            page.setName(packet.name);
-            page.setCreated(packet.created);
-            page.setAuthor(packet.author);
-            page.setLastModified(packet.lastModified);
-            page.setLastContributor(packet.lastContributor);
-            page.setContents(PageUtil.replaceColorCodes("&", packet.contents, true));
+        if (canSavePages()) {
+            savePage(message.identifier, page);
+        }
 
-            // Save guides on SP
-            if (FMLCommonHandler.instance().getEffectiveSide().isServer() && !MinecraftServer.getServer().isDedicatedServer()) {
-                try {
-                    PageUtil.savePage(packet.identifier, page);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        Guide.NETWORK_FORGE.sendToAll(new S00PageInformation(page));
+    }
+
+    public void handlePageDelete(MessageContext ctx, S01PageDelete message) {
+        PageRegistry.removePage(message.identifier);
+        if (canSavePages()) {
+            deletePage(message.identifier);
+        }
+    }
+
+    public void handlePageOpen(MessageContext ctx, S02PageOpen message) {
+    }
+
+    public boolean canSavePages() {
+        return false;
+    }
+
+    private void savePage(String identifier, Page page) {
+        try {
+            PageUtil.savePage(identifier, page);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deletePage(String identifier) {
+        try {
+            PageUtil.deletePage(identifier);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
