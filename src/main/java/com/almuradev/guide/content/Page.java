@@ -24,6 +24,7 @@
  */
 package com.almuradev.guide.content;
 
+import java.util.Comparator;
 import java.util.Date;
 
 public final class Page {
@@ -79,7 +80,7 @@ public final class Page {
         return name;
     }
 
-    public Page setName(String name) {
+    public Page setTitle(String name) {
         this.name = name;
         return this;
     }
@@ -125,6 +126,7 @@ public final class Page {
     public String toString() {
         return "Page { " +
                 "identifier= [" + identifier + "]" +
+                ", index= [" + index + "]" +
                 ", created= [" + created + "]" +
                 ", lastModified= [" + lastModified + "]" +
                 ", title= [" + name + "]" +
@@ -132,5 +134,13 @@ public final class Page {
                 ", lastContributor= [" + lastContributor + "]" +
                 ", contents= [" + contents + "]" +
                 " }";
+    }
+
+    public static class PageIndexComparator implements Comparator<Page> {
+
+        @Override
+        public int compare(Page o1, Page o2) {
+            return Integer.compare(o1.index, o2.index);
+        }
     }
 }

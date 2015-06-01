@@ -34,14 +34,16 @@ import com.almuradev.guide.client.network.play.C00PageInformation;
 import com.almuradev.guide.content.Page;
 import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.content.PageUtil;
+import com.almuradev.guide.event.PageDeleteEvent;
 import com.almuradev.guide.event.PageInformationEvent;
-import com.almuradev.guide.server.network.play.S00PageInformation;
 import com.almuradev.guide.server.network.play.S01PageDelete;
 import com.google.common.base.Function;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.Subscribe;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.malisis.core.client.gui.Anchor;
 import net.malisis.core.client.gui.component.interaction.UIButton;
 import net.malisis.core.client.gui.component.interaction.UISelect;
@@ -50,8 +52,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
+@SideOnly(Side.CLIENT)
 public class ViewPagesGui extends SimpleGui {
 
     public static final Color CONTROL = new Color("control", 13158600);
@@ -62,6 +67,10 @@ public class ViewPagesGui extends SimpleGui {
         }
     };
 
+    private final int internalPadding = 2;
+    private final int externalPadding = 4;
+
+    private UIForm form;
     private UISelect<Page> selectPage;
     private UITextField textFieldContents;
     private UIButton buttonStyled, buttonRaw, buttonDetails, buttonDelete, buttonAdd, buttonClose, buttonSave;
@@ -72,12 +81,9 @@ public class ViewPagesGui extends SimpleGui {
 
     @Override
     public void construct() {
-        final int internalPadding = 2;
-        final int externalPadding = 4;
-
         guiscreenBackground = false;
 
-        final UIForm form = new UIForm(this, 300, 225, "Guide");
+        form = new UIForm(this, 300, 225, "Guide");
         form.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
         form.setName("form.guide.main");
         form.setColor(CONTROL.getGuiColorCode());
@@ -87,7 +93,8 @@ public class ViewPagesGui extends SimpleGui {
         buttonStyled.setAnchor(Anchor.TOP | Anchor.LEFT);
         buttonStyled.setPosition(externalPadding, externalPadding);
         buttonStyled.setSize(0, 12);
-        buttonStyled.setName("form.guide.main.button.styled");
+        buttonStyled.setName("form.guide.view.button.styled");
+        buttonStyled.setVisible(false);
         buttonStyled.getFontRenderOptions().italic = true;
         buttonStyled.getHoveredFontRendererOptions().italic = true;
         buttonStyled.setTooltip("Styles the page text");
@@ -95,9 +102,10 @@ public class ViewPagesGui extends SimpleGui {
 
         buttonRaw = new UIButton(this, "</>");
         buttonRaw.setAnchor(Anchor.TOP | Anchor.LEFT);
-        buttonRaw.setPosition(getPaddedX(buttonStyled, 2), buttonStyled.getY());
+        buttonRaw.setPosition(getPaddedX(buttonStyled, internalPadding), buttonStyled.getY());
         buttonRaw.setSize(0, 12);
-        buttonRaw.setName("form.guide.main.button.raw");
+        buttonRaw.setName("form.guide.view.button.raw");
+        buttonRaw.setVisible(false);
         buttonRaw.setTooltip("Shows the raw text behind the styled page");
         buttonRaw.register(this);
 
@@ -105,7 +113,7 @@ public class ViewPagesGui extends SimpleGui {
         selectPage.setAnchor(Anchor.TOP | Anchor.RIGHT);
         selectPage.setPosition(-externalPadding, externalPadding);
         selectPage.setSize(130, 15);
-        selectPage.setName("form.guide.main.select.page");
+        selectPage.setName("form.guide.view.select.page");
         selectPage.setLabelFunction(FUNCTION_LABEL_NAME);
         selectPage.setColors(selectPage.getBgColor(), Colors.DARK_GRAY.getGuiColorCode());
         selectPage.getFontRenderOptions().color = Colors.WHITE.getGuiColorCode();
@@ -119,9 +127,10 @@ public class ViewPagesGui extends SimpleGui {
 
         buttonDetails = new UIButton(this, "?");
         buttonDetails.setAnchor(Anchor.TOP | Anchor.RIGHT);
-        buttonDetails.setPosition(getPaddedX(selectPage, 2, Anchor.RIGHT), externalPadding);
+        buttonDetails.setPosition(getPaddedX(selectPage, internalPadding, Anchor.RIGHT), externalPadding);
         buttonDetails.setSize(0, 15);
-        buttonDetails.setName("form.guide.main.button.details");
+        buttonDetails.setName("form.guide.view.button.details");
+        buttonDetails.setVisible(false);
         buttonDetails.getFontRenderOptions().color = Colors.GOLD.getGuiColorCode();
         buttonDetails.getFontRenderOptions().shadow = false;
         buttonDetails.setTooltip("Details of this page");
@@ -130,16 +139,16 @@ public class ViewPagesGui extends SimpleGui {
         buttonDelete = new UIButton(this, "-");
         buttonDelete.setAnchor(Anchor.BOTTOM | Anchor.LEFT);
         buttonDelete.setPosition(externalPadding, -externalPadding);
-        buttonDelete.setName("form.guide.main.button.delete");
-        buttonDelete.setVisible(true);
+        buttonDelete.setName("form.guide.view.button.delete");
+        buttonDelete.setVisible(false);
         buttonDelete.getFontRenderOptions().color = Colors.RED.getGuiColorCode();
         buttonDelete.setTooltip("Delete this page");
         buttonDelete.register(this);
 
         buttonAdd = new UIButton(this, "+");
         buttonAdd.setAnchor(Anchor.BOTTOM | Anchor.LEFT);
-        buttonAdd.setPosition(getPaddedX(buttonDelete, 2), buttonDelete.getY());
-        buttonAdd.setName("form.guide.main.button.add");
+        buttonAdd.setPosition(buttonDelete.isVisible() ? getPaddedX(buttonDelete, internalPadding) : externalPadding, buttonDelete.getY());
+        buttonAdd.setName("form.guide.view.button.add");
         buttonAdd.setVisible(true);
         buttonAdd.getFontRenderOptions().color = Colors.GREEN.getGuiColorCode();
         buttonAdd.setTooltip("Add a new page");
@@ -149,25 +158,26 @@ public class ViewPagesGui extends SimpleGui {
         buttonClose.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
         buttonClose.setPosition(-externalPadding, -externalPadding);
         buttonClose.setSize(0, 15);
-        buttonClose.setName("form.guide.main.button.close");
+        buttonClose.setName("form.guide.view.button.close");
         buttonClose.register(this);
 
         buttonSave = new UIButton(this, "Save");
         buttonSave.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
-        buttonSave.setPosition(getPaddedX(buttonClose, 2, Anchor.RIGHT), -externalPadding);
+        buttonSave.setPosition(getPaddedX(buttonClose, internalPadding, Anchor.RIGHT), -externalPadding);
         buttonSave.setSize(0, 15);
-        buttonSave.setName("form.guide.main.button.save");
+        buttonSave.setName("form.guide.view.button.save");
         buttonSave.setVisible(false);
         buttonSave.register(this);
 
         textFieldContents = new UITextField(this, true);
-        textFieldContents.setPosition(externalPadding, getPaddedY(buttonStyled, 2));
-        textFieldContents.setSize(form.getWidth() - (externalPadding * 2), form.getContentHeight() - textFieldContents.getY() -
-                externalPadding - (buttonClose.getHeight() * 2));
+        textFieldContents.setPosition(externalPadding, getPaddedY(buttonStyled, internalPadding));
+        textFieldContents.setSize(form.getWidth() - (externalPadding * internalPadding), form.getContentHeight() - textFieldContents.getY() -
+                externalPadding - (buttonClose.getHeight() * internalPadding));
         textFieldContents.setOptions(Colors.GRAY.getGuiColorCode(), CONTROL.getGuiColorCode(), Colors.BLACK.getGuiColorCode());
         textFieldContents.getFontRenderOptions().color = Colors.WHITE.getGuiColorCode();
         textFieldContents.getFontRenderOptions().shadow = false;
         textFieldContents.getScrollbar().setAutoHide(true);
+        textFieldContents.setEditable(false);
 
         form.getContentContainer().add(buttonStyled, buttonRaw, selectPage, textFieldContents, buttonDetails, buttonDelete, buttonAdd,
                 buttonSave, buttonClose);
@@ -196,7 +206,7 @@ public class ViewPagesGui extends SimpleGui {
 
             PageUtil.loadAll();
 
-            final Set<Page> options = populate();
+            final List<Page> options = populate();
             selectPage.setOptions(options);
 
             if (!options.isEmpty()) {
@@ -212,78 +222,111 @@ public class ViewPagesGui extends SimpleGui {
     @Subscribe
     public void onUIButtonClickEvent(UIButton.ClickEvent event) {
         switch (event.getComponent().getName().toLowerCase()) {
-            case "form.guide.main.button.styled":
+            case "form.guide.view.button.styled":
                 textFieldContents.setText(PageUtil.replaceColorCodes("&", textFieldContents.getText(), true));
                 break;
-            case "form.guide.main.button.raw":
+            case "form.guide.view.button.raw":
                 textFieldContents.setText(PageUtil.replaceColorCodes("&", textFieldContents.getText(), false));
                 break;
-            case "form.guide.main.button.details":
+            case "form.guide.view.button.details":
                 Minecraft.getMinecraft().displayGuiScreen(new ModifyPageGui(this, selectPage.getSelectedValue()));
                 break;
-            case "form.guide.main.button.add":
-                Minecraft.getMinecraft().displayGuiScreen(new ModifyPageGui(this));
+            case "form.guide.view.button.add":
+                Minecraft.getMinecraft().displayGuiScreen(new CreatePageGui(this));
                 break;
-            case "form.guide.main.button.delete":
+            case "form.guide.view.button.delete":
                 Guide.NETWORK_FORGE.sendToServer(new S01PageDelete(selectPage.getSelectedOption().getKey().getIdentifier()));
                 break;
-            case "form.guide.main.button.close":
+            case "form.guide.view.button.close":
                 close();
                 break;
-            case "form.guide.main.button.save":
+            case "form.guide.view.button.save":
                 if (selectPage.getSelectedOption() != null) {
                     final Page page = selectPage.getSelectedOption().getKey();
-                    Guide.NETWORK_FORGE.sendToServer(
-                            new C00PageInformation(page.getIdentifier(), page.getIndex(), page.getName(), textFieldContents.getText()));
+                    if (ClientProxy.getPermissions().hasPermission("save." + page.getIdentifier())) {
+                        Guide.NETWORK_FORGE.sendToServer(
+                                new C00PageInformation(page.getIdentifier(), page.getIndex(), page.getName(), textFieldContents.getText()));
+                    }
                 }
                 break;
-
         }
     }
 
     @Subscribe
     public void onUISelectEvent(UISelect.SelectEvent event) {
         if (event.getNewValue() == null) {
-            buttonStyled.setVisible(false);
-            buttonRaw.setVisible(false);
-            buttonDelete.setVisible(false);
-            buttonSave.setVisible(false);
+            updateGui(null);
             return;
         }
-        if (event.getComponent().getName().equalsIgnoreCase("form.guide.main.select.page")) {
-            ((UIForm) event.getComponent().getParent().getParent()).setTitle("Guide - " + ((Page) event.getNewValue()).getName());
-            textFieldContents.setText(((Page) event.getNewValue()).getContents());
-
-            final boolean hasSavePermission = ClientProxy.getPermissions().hasPermission("save." + ((Page) event.getNewValue()).getIdentifier());
-            final boolean hasDeletePermission = ClientProxy.getPermissions().hasPermission("delete." + ((Page) event.getNewValue()).getIdentifier());
-            final boolean hasAddPermission = ClientProxy.getPermissions().hasPermission("add");
-
-            // Show formatting buttons if user has save permission
-            buttonStyled.setVisible(hasSavePermission);
-            buttonRaw.setVisible(hasSavePermission);
-
-            // Show delete ('-') button when player has delete permission
-            buttonDelete.setVisible(hasDeletePermission);
-
-            // Show add ('+') button when player has add permission
-            buttonAdd.setVisible(hasAddPermission);
-            buttonAdd.setPosition(buttonDelete.isVisible() ? getPaddedX(buttonDelete, 2) : 2, buttonAdd.getY());
-
-            // Show save button when player has save permission
-            buttonSave.setVisible(hasSavePermission);
+        if (event.getComponent().getName().equalsIgnoreCase("form.guide.view.select.page")) {
+            updateGui((Page) event.getNewValue());
         }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPageInformationEvent(PageInformationEvent event) {
-        if (selectPage.getSelectedOption() != null) {
-            if (selectPage.getSelectedOption().getKey().equals(event.page)) {
-                textFieldContents.setText(event.page.getContents());
-            }
+        selectPage.setOptions(populate());
+        if (selectPage.getSelectedValue() != null && Objects.equals(selectPage.getSelectedValue().getIdentifier(), event.page.getIdentifier())) {
+            final String copyContents = textFieldContents.getText();
+            selectPage.setSelectedOption(event.page);
+            updateGui(selectPage.getSelectedValue());
+            textFieldContents.setText(copyContents);
         }
     }
 
-    private Set<Page> populate() {
-        return Sets.newHashSet(PageRegistry.getAll().values());
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onPageDeleteEvent(PageDeleteEvent event) {
+        selectPage.setOptions(populate());
+        if (selectPage.getSelectedValue() != null && Objects.equals(selectPage.getSelectedValue().getIdentifier(), event.identifier)) {
+            selectPage.setSelectedOption(selectPage.selectFirst());
+            updateGui(selectPage.getSelectedValue());
+        }
+    }
+
+    private List<Page> populate() {
+        final List<Page> pageList = Lists.newArrayList(PageRegistry.getAll().values());
+        Collections.sort(pageList, new Page.PageIndexComparator());
+        return pageList;
+    }
+
+    private void updateGui(Page page) {
+        final boolean hasCreatePermission = ClientProxy.getPermissions().hasPermission("create");
+        if (page == null) {
+            form.setTitle("Guide");
+            textFieldContents.setText("");
+            textFieldContents.setEditable(false);
+            buttonStyled.setVisible(false);
+            buttonRaw.setVisible(false);
+            buttonDelete.setVisible(false);
+            buttonAdd.setVisible(hasCreatePermission);
+            buttonAdd.setPosition(buttonDelete.isVisible() ? getPaddedX(buttonDelete, internalPadding) : externalPadding, buttonDelete.getY());
+            buttonSave.setVisible(false);
+            buttonDetails.setVisible(false);
+            return;
+        }
+        form.setTitle("Guide - " + page.getName());
+        textFieldContents.setText(page.getContents());
+
+        final boolean hasSavePermission = ClientProxy.getPermissions().hasPermission("save." + page.getIdentifier());
+        final boolean hasDeletePermission = ClientProxy.getPermissions().hasPermission("delete." + page.getIdentifier());
+
+        // Show formatting buttons if user has save permission
+        buttonStyled.setVisible(hasSavePermission);
+        buttonRaw.setVisible(hasSavePermission);
+
+        textFieldContents.setEditable(true);
+
+        // Show delete ('-') button when player has delete permission
+        buttonDelete.setVisible(hasDeletePermission);
+
+        // Show add ('+') button when player has add permission
+        buttonAdd.setVisible(hasCreatePermission);
+        buttonAdd.setPosition(buttonDelete.isVisible() ? getPaddedX(buttonDelete, internalPadding) : externalPadding, buttonDelete.getY());
+
+        // Show save button when player has save permission
+        buttonSave.setVisible(hasSavePermission);
+
+        // Show the details button
+        buttonDetails.setVisible(true);
     }
 }

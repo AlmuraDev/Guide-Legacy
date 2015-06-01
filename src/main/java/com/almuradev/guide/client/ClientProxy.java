@@ -27,6 +27,7 @@ package com.almuradev.guide.client;
 import com.almuradev.almurasdk.AlmuraSDK;
 import com.almuradev.almurasdk.permissions.Permissions;
 import com.almuradev.guide.CommonProxy;
+import com.almuradev.guide.Guide;
 import com.almuradev.guide.client.gui.ViewPagesGui;
 import com.almuradev.guide.content.Page;
 import com.almuradev.guide.content.PageRegistry;
@@ -75,8 +76,11 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void handlePageDelete(MessageContext ctx, S01PageDelete message) {
         super.handlePageDelete(ctx, message);
-
-        MinecraftForge.EVENT_BUS.post(new PageDeleteEvent(message.identifier));
+        if (ctx.side.isClient()) {
+            MinecraftForge.EVENT_BUS.post(new PageDeleteEvent(message.identifier));
+        } else if (!MinecraftServer.getServer().isDedicatedServer()) {
+            Guide.NETWORK_FORGE.sendToAll(new S01PageDelete(message.identifier));
+        }
     }
 
     @Override

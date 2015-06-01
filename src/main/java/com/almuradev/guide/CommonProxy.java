@@ -45,10 +45,10 @@ public class CommonProxy {
 
     public void onPreInitializationEvent(FMLPreInitializationEvent event) {
         Guide.NETWORK_FORGE.registerMessage(S00PageInformation.class, S00PageInformation.class, 0, Side.CLIENT);
-        Guide.NETWORK_FORGE.registerMessage(C00PageInformation.class, C00PageInformation.class, 0, Side.SERVER);
-        Guide.NETWORK_FORGE.registerMessage(S01PageDelete.class, S01PageDelete.class, 1, Side.CLIENT);
-        Guide.NETWORK_FORGE.registerMessage(S01PageDelete.class, S01PageDelete.class, 1, Side.SERVER);
-        Guide.NETWORK_FORGE.registerMessage(S02PageOpen.class, S02PageOpen.class, 2, Side.CLIENT);
+        Guide.NETWORK_FORGE.registerMessage(C00PageInformation.class, C00PageInformation.class, 1, Side.SERVER);
+        Guide.NETWORK_FORGE.registerMessage(S01PageDelete.class, S01PageDelete.class, 2, Side.CLIENT);
+        Guide.NETWORK_FORGE.registerMessage(S01PageDelete.class, S01PageDelete.class, 3, Side.SERVER);
+        Guide.NETWORK_FORGE.registerMessage(S02PageOpen.class, S02PageOpen.class, 4, Side.CLIENT);
     }
 
     public void onInitialization(FMLInitializationEvent event) {
@@ -71,7 +71,7 @@ public class CommonProxy {
                     .setIndex(message.index)
                     .setLastContributor(ctx.getServerHandler().playerEntity.getCommandSenderName())
                     .setLastModified(new Date())
-                    .setName(message.title)
+                    .setTitle(message.title)
                     .setContents(PageUtil.replaceColorCodes("&", message.contents, true));
         } else {
             // String identifier, int index, String name, Date created, String author, Date lastModified, String lastContributor, String contents
