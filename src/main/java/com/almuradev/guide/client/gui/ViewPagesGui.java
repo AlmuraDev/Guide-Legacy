@@ -271,6 +271,9 @@ public class ViewPagesGui extends SimpleGui {
             selectPage.setSelectedOption(event.page);
             updateGui(selectPage.getSelectedValue());
             textFieldContents.setText(copyContents);
+        } else {
+            selectPage.setSelectedOption(selectPage.selectFirst());
+            updateGui(selectPage.getSelectedValue());
         }
     }
 
