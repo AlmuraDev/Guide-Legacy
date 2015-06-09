@@ -59,8 +59,6 @@ public class CreatePageGui extends SimpleGui {
         final int textFieldTopPadding = 1;
         final int padding = 4;
 
-        guiscreenBackground = false;
-
         final UIForm form = new UIForm(this, 150, 114, "Guide - Create Page");
         form.setAnchor(Anchor.CENTER | Anchor.MIDDLE);
         form.setName("form.guide.create");
