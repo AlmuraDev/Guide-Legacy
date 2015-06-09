@@ -36,6 +36,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.malisis.core.client.gui.Anchor;
 import net.malisis.core.client.gui.component.decoration.UILabel;
+import net.malisis.core.client.gui.component.decoration.UITooltip;
 import net.malisis.core.client.gui.component.interaction.UIButton;
 import net.malisis.core.client.gui.component.interaction.UITextField;
 
@@ -75,7 +76,7 @@ public class CreatePageGui extends SimpleGui {
         textFieldFileName.setAnchor(Anchor.TOP | Anchor.LEFT);
         textFieldFileName.setPosition(padding, getPaddedY(labelFileName, textFieldTopPadding));
         textFieldFileName.setSize(form.getWidth() - (padding * 2), 0);
-        textFieldFileName.setTooltip("File must not exist already.");
+        textFieldFileName.setTooltip(new UITooltip(this, "File must not exist already.", 20));
         textFieldFileName.setFocused(true);
 
         labelIndex = new UILabel(this, "Index");
@@ -87,7 +88,7 @@ public class CreatePageGui extends SimpleGui {
         textFieldIndex.setAnchor(Anchor.TOP | Anchor.LEFT);
         textFieldIndex.setPosition(padding, getPaddedY(labelIndex, textFieldTopPadding));
         textFieldIndex.setSize(form.getWidth() - 8, 0);
-        textFieldIndex.setTooltip("Value must be equal to or greater than 0.");
+        textFieldIndex.setTooltip(new UITooltip(this, "Value must be equal to or greater than 0.", 20));
         textFieldIndex.setValidator(new IntegerFilterPredicate());
 
         labelTitle = new UILabel(this, "Title");
@@ -99,7 +100,7 @@ public class CreatePageGui extends SimpleGui {
         textFieldTitle.setAnchor(Anchor.TOP | Anchor.LEFT);
         textFieldTitle.setPosition(padding, getPaddedY(labelTitle, textFieldTopPadding));
         textFieldTitle.setSize(form.getWidth() - (padding * 2), 0);
-        textFieldTitle.setTooltip("Name must not be greater than 100 characters.");
+        textFieldTitle.setTooltip(new UITooltip(this, "Name must not be greater than 100 characters.", 20));
         textFieldTitle.setValidator(new StringLengthPredicate(1, 100));
 
         buttonCancel = new UIButton(this, "Cancel");

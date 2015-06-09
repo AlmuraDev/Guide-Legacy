@@ -36,6 +36,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.malisis.core.client.gui.Anchor;
 import net.malisis.core.client.gui.component.decoration.UILabel;
+import net.malisis.core.client.gui.component.decoration.UITooltip;
 import net.malisis.core.client.gui.component.interaction.UIButton;
 import net.malisis.core.client.gui.component.interaction.UITextField;
 
@@ -85,7 +86,7 @@ public class ModifyPageGui extends SimpleGui {
         textFieldIndex.setSize(form.getWidth() - 8, 0);
         textFieldIndex.setVisible(hasPermission);
         if (hasPermission) {
-            textFieldIndex.setTooltip("Value must be equal to or greater than 0.");
+            textFieldIndex.setTooltip(new UITooltip(this, "Value must be equal to or greater than 0.", 20));
         }
         textFieldIndex.setValidator(new IntegerFilterPredicate());
         textFieldIndex.setFocused(true);
@@ -100,7 +101,7 @@ public class ModifyPageGui extends SimpleGui {
         textFieldTitle.setPosition(padding, getPaddedY(labelTitle, textFieldTopPadding));
         textFieldTitle.setSize(form.getWidth() - (padding * 2), 0);
         if (hasPermission) {
-            textFieldTitle.setTooltip("Name must not be greater than 100 characters.");
+            textFieldTitle.setTooltip(new UITooltip(this, "Name must not be greater than 100 characters.", 20));
         }
         textFieldTitle.setEditable(hasPermission);
         textFieldTitle.setValidator(new StringLengthPredicate(1, 100));

@@ -45,6 +45,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.malisis.core.client.gui.Anchor;
+import net.malisis.core.client.gui.component.decoration.UITooltip;
 import net.malisis.core.client.gui.component.interaction.UIButton;
 import net.malisis.core.client.gui.component.interaction.UISelect;
 import net.malisis.core.client.gui.component.interaction.UITextField;
@@ -59,7 +60,7 @@ import java.util.Objects;
 @SideOnly(Side.CLIENT)
 public class ViewPagesGui extends SimpleGui {
 
-    public static final Color CONTROL = new Color("control", 13158600);
+    public static final Color CONTROL = new Color("control", 13208600);
     public static final Function<Page, String> FUNCTION_LABEL_NAME = new Function<Page, String>() {
         @Override
         public String apply(Page page) {
@@ -97,7 +98,7 @@ public class ViewPagesGui extends SimpleGui {
         buttonStyled.setVisible(false);
         buttonStyled.getFontRenderOptions().italic = true;
         buttonStyled.getHoveredFontRendererOptions().italic = true;
-        buttonStyled.setTooltip("Styles the page text");
+        buttonStyled.setTooltip(new UITooltip(this, "Styles the page text", 20));
         buttonStyled.register(this);
 
         buttonRaw = new UIButton(this, "</>");
@@ -106,7 +107,7 @@ public class ViewPagesGui extends SimpleGui {
         buttonRaw.setSize(0, 12);
         buttonRaw.setName("form.guide.view.button.raw");
         buttonRaw.setVisible(false);
-        buttonRaw.setTooltip("Shows the raw text behind the styled page");
+        buttonRaw.setTooltip(new UITooltip(this, "Shows the raw text behind the styled page", 20));
         buttonRaw.register(this);
 
         selectPage = new UISelect<>(this, 140, populate());
@@ -133,7 +134,7 @@ public class ViewPagesGui extends SimpleGui {
         buttonDetails.setVisible(false);
         buttonDetails.getFontRenderOptions().color = Colors.GOLD.getGuiColorCode();
         buttonDetails.getFontRenderOptions().shadow = false;
-        buttonDetails.setTooltip("Details of this page");
+        buttonDetails.setTooltip(new UITooltip(this, "Details of this page", 20));
         buttonDetails.register(this);
 
         buttonDelete = new UIButton(this, "-");
@@ -142,7 +143,7 @@ public class ViewPagesGui extends SimpleGui {
         buttonDelete.setName("form.guide.view.button.delete");
         buttonDelete.setVisible(false);
         buttonDelete.getFontRenderOptions().color = Colors.RED.getGuiColorCode();
-        buttonDelete.setTooltip("Delete this page");
+        buttonDelete.setTooltip(new UITooltip(this, "Delete this page", 20));
         buttonDelete.register(this);
 
         buttonAdd = new UIButton(this, "+");
@@ -151,7 +152,7 @@ public class ViewPagesGui extends SimpleGui {
         buttonAdd.setName("form.guide.view.button.add");
         buttonAdd.setVisible(true);
         buttonAdd.getFontRenderOptions().color = Colors.GREEN.getGuiColorCode();
-        buttonAdd.setTooltip("Add a new page");
+        buttonAdd.setTooltip(new UITooltip(this, "Add a new page", 20));
         buttonAdd.register(this);
 
         buttonClose = new UIButton(this, "Close");
