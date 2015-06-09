@@ -97,7 +97,7 @@ public class PageUtil {
     }
 
     public static void savePage(String identifier, Page page) throws IOException {
-        final Path p = Paths.get(PATH_PAGES.toString(), identifier.trim() + ".yml");
+        final Path p = Paths.get(PATH_PAGES.toString(), identifier + ".yml");
         if (Files.notExists(p)) {
             Files.createFile(p);
         }

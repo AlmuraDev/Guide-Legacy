@@ -127,6 +127,7 @@ public class CreatePageGui extends SimpleGui {
         switch (event.getComponent().getName()) {
             case "form.guide.create.button.save":
                 if (ClientProxy.getPermissions().hasPermission("create")) {
+                    textFieldFileName.setText(textFieldFileName.getText().trim());
                     if (textFieldFileName.getText().isEmpty() || textFieldIndex.getText().isEmpty() || textFieldTitle.getText().isEmpty()) {
                         break;
                     }
