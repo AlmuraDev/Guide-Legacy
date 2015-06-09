@@ -28,6 +28,7 @@ import com.almuradev.almurasdk.FileSystem;
 import com.almuradev.almurasdk.util.Color;
 import com.almuradev.almurasdk.util.Colors;
 import com.almuradev.guide.Guide;
+import cpw.mods.fml.common.FMLCommonHandler;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.yaml.snakeyaml.DumperOptions;
@@ -63,9 +64,11 @@ public class PageUtil {
     }
 
     public static void loadAll() {
-        PageRegistry.clear();
-        PageUtil.loadPages(PageUtil.PATH_PAGES, FileSystem.FILTER_YAML_FILES_ONLY);
-        Guide.LOGGER.info("Loaded [" + PageRegistry.getAll().size() + "] page(s).");
+        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            PageRegistry.clear();
+            PageUtil.loadPages(PageUtil.PATH_PAGES, FileSystem.FILTER_YAML_FILES_ONLY);
+            Guide.LOGGER.info("Loaded [" + PageRegistry.getAll().size() + "] page(s).");
+        }
     }
 
     public static void loadPages(Path path, DirectoryStream.Filter<Path> filter) {
