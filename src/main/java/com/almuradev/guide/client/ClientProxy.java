@@ -39,10 +39,6 @@ import com.almuradev.guide.server.network.play.S00PageInformation;
 import com.almuradev.guide.server.network.play.S01PageDelete;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import com.almuradev.guide.server.network.play.S02PageOpen;
-<<<<<<< HEAD
->>>>>>> 36d0bff... Implement opening a page, forcibly, on the client.
-=======
->>>>>>> cd1b316... blah
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
