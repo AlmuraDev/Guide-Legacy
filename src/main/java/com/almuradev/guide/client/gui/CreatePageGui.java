@@ -51,7 +51,6 @@ public class CreatePageGui extends SimpleGui {
 
     public CreatePageGui(ViewPagesGui parent) {
         super(parent);
-        this.construct();
     }
 
     @Override

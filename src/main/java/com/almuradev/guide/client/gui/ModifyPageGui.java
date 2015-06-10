@@ -56,7 +56,6 @@ public class ModifyPageGui extends SimpleGui {
     public ModifyPageGui(ViewPagesGui parent, Page page) {
         super(parent);
         this.page = page;
-        this.construct();
     }
 
     @Override

@@ -123,7 +123,7 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent event) {
         if (getPermissions().hasPermission("mod.guide.open") && Keyboard.isKeyDown(BINDING_OPEN_GUIDE.getKeyCode())) {
-            Minecraft.getMinecraft().displayGuiScreen(new ViewPagesGui());
+            new ViewPagesGui().display();
         }
     }
 }

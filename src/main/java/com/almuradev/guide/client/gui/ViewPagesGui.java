@@ -49,7 +49,6 @@ import net.malisis.core.client.gui.component.decoration.UITooltip;
 import net.malisis.core.client.gui.component.interaction.UIButton;
 import net.malisis.core.client.gui.component.interaction.UISelect;
 import net.malisis.core.client.gui.component.interaction.UITextField;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
@@ -75,10 +74,6 @@ public class ViewPagesGui extends SimpleGui {
     private UISelect<Page> selectPage;
     private UITextField textFieldContents;
     private UIButton buttonStyled, buttonRaw, buttonDetails, buttonDelete, buttonAdd, buttonClose, buttonSave;
-
-    public ViewPagesGui() {
-        construct();
-    }
 
     @Override
     public void construct() {
@@ -230,10 +225,10 @@ public class ViewPagesGui extends SimpleGui {
                 textFieldContents.setText(PageUtil.replaceColorCodes("&", textFieldContents.getText(), false));
                 break;
             case "form.guide.view.button.details":
-                Minecraft.getMinecraft().displayGuiScreen(new ModifyPageGui(this, selectPage.getSelectedValue()));
+                new ModifyPageGui(this, selectPage.getSelectedValue()).display();
                 break;
             case "form.guide.view.button.add":
-                Minecraft.getMinecraft().displayGuiScreen(new CreatePageGui(this));
+                new CreatePageGui(this).display();
                 break;
             case "form.guide.view.button.delete":
                 Guide.NETWORK_FORGE.sendToServer(new S01PageDelete(selectPage.getSelectedOption().getKey().getIdentifier()));
@@ -290,7 +285,7 @@ public class ViewPagesGui extends SimpleGui {
 
     public void selectPage(Page page) {
         selectPage.setSelectedOption(page);
-        updateGui(page);
+        updateGui(selectPage.getSelectedValue());
     }
 
     private List<Page> populate() {
