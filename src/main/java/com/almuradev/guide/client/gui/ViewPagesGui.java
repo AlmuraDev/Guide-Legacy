@@ -288,6 +288,11 @@ public class ViewPagesGui extends SimpleGui {
         }
     }
 
+    public void selectPage(Page page) {
+        selectPage.setSelectedOption(page);
+        updateGui(page);
+    }
+
     private List<Page> populate() {
         final List<Page> pageList = Lists.newArrayList(PageRegistry.getAll().values());
         Collections.sort(pageList, new Page.PageIndexComparator());

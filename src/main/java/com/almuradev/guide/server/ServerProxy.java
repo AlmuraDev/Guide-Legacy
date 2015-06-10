@@ -64,6 +64,8 @@ public class ServerProxy extends CommonProxy {
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         for (Map.Entry<String, Page> entry : PageRegistry.getAll().entrySet()) {
             Guide.NETWORK_FORGE.sendTo(new S00PageInformation(entry.getValue()), (EntityPlayerMP) event.player);
+            // TODO This is how you open a gui on their client, replace "byes" with the page's identifier
+            //Guide.NETWORK_FORGE.sendTo(new S02PageOpen("byes"), (EntityPlayerMP) event.player);
         }
     }
 }
