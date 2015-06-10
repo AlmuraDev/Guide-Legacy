@@ -108,8 +108,7 @@ public class ClientProxy extends CommonProxy {
         final Page page = PageRegistry.getPage(message.identifier).orNull();
         if (page != null && ClientProxy.getPermissions().hasPermission("auto")) {
             if (!(Minecraft.getMinecraft().currentScreen instanceof ViewPagesGui)) {
-                final ViewPagesGui form = new ViewPagesGui();
-                form.display();
+                new ViewPagesGui().display();
             }
             ((ViewPagesGui) Minecraft.getMinecraft().currentScreen).selectPage(page);
         }
@@ -122,8 +121,10 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent event) {
-        if (getPermissions().hasPermission("mod.guide.open") && Keyboard.isKeyDown(BINDING_OPEN_GUIDE.getKeyCode())) {
-            new ViewPagesGui().display();
+        if (Minecraft.getMinecraft().currentScreen == null) {
+            if (getPermissions().hasPermission("mod.guide.open") && Keyboard.isKeyDown(BINDING_OPEN_GUIDE.getKeyCode())) {
+                new ViewPagesGui().display();
+            }
         }
     }
 }
