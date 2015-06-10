@@ -30,6 +30,8 @@ import com.almuradev.guide.content.Page;
 import com.almuradev.guide.content.PageRegistry;
 import com.almuradev.guide.server.network.play.S00PageInformation;
 import com.almuradev.guide.server.network.play.S01PageDelete;
+import com.almuradev.guide.server.network.play.S02PageOpen;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -65,7 +67,7 @@ public class ServerProxy extends CommonProxy {
         for (Map.Entry<String, Page> entry : PageRegistry.getAll().entrySet()) {
             Guide.NETWORK_FORGE.sendTo(new S00PageInformation(entry.getValue()), (EntityPlayerMP) event.player);
             // TODO This is how you open a gui on their client, replace "byes" with the page's identifier
-            //Guide.NETWORK_FORGE.sendTo(new S02PageOpen("byes"), (EntityPlayerMP) event.player);
+            Guide.NETWORK_FORGE.sendTo(new S02PageOpen("Welcome"), (EntityPlayerMP) event.player);
         }
     }
 }
