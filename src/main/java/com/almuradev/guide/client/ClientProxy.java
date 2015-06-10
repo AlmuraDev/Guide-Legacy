@@ -106,7 +106,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void handlePageOpen(MessageContext ctx, S02PageOpen message) {
         final Page page = PageRegistry.getPage(message.identifier).orNull();
-        if (page != null) {
+        if (page != null && ClientProxy.getPermissions().hasPermission("auto")) {
             if (!(Minecraft.getMinecraft().currentScreen instanceof ViewPagesGui)) {
                 final ViewPagesGui form = new ViewPagesGui();
                 form.display();
