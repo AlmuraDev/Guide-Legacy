@@ -69,6 +69,16 @@ public class ClientProxy extends CommonProxy {
             page = new Page(message.identifier, message.index, message.title, message.created, message.author,
                     message.lastModified, message.lastContributor, message.contents);
             PageRegistry.putPage(page);
+        } else {
+            page
+
+                    .setIndex(message.index)
+                    .setTitle(message.title)
+                    .setCreated(message.created)
+                    .setAuthor(message.author)
+                    .setLastModified(message.lastModified)
+                    .setLastContributor(message.lastContributor)
+                    .setContents(message.contents);
         }
         MinecraftForge.EVENT_BUS.post(new PageInformationEvent(page));
     }

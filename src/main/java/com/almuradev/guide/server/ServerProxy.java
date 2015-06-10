@@ -26,12 +26,27 @@ package com.almuradev.guide.server;
 
 import com.almuradev.guide.CommonProxy;
 import com.almuradev.guide.Guide;
+import com.almuradev.guide.content.Page;
+import com.almuradev.guide.content.PageRegistry;
+import com.almuradev.guide.server.network.play.S00PageInformation;
 import com.almuradev.guide.server.network.play.S01PageDelete;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.entity.player.EntityPlayerMP;
+
+import java.util.Map;
 
 public class ServerProxy extends CommonProxy {
 
     public static final String CLASSPATH = "com.almuradev.guide.server.ServerProxy";
+
+    @Override
+    public void onInitialization(FMLInitializationEvent event) {
+        FMLCommonHandler.instance().bus().register(this);
+    }
 
     @Override
     public void handlePageDelete(MessageContext ctx, S01PageDelete message) {
@@ -43,5 +58,12 @@ public class ServerProxy extends CommonProxy {
     @Override
     public boolean canSavePages() {
         return true;
+    }
+
+    @SubscribeEvent
+    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        for (Map.Entry<String, Page> entry : PageRegistry.getAll().entrySet()) {
+            Guide.NETWORK_FORGE.sendTo(new S00PageInformation(entry.getValue()), (EntityPlayerMP) event.player);
+        }
     }
 }

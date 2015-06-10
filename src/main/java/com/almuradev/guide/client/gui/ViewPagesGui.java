@@ -60,7 +60,7 @@ import java.util.Objects;
 @SideOnly(Side.CLIENT)
 public class ViewPagesGui extends SimpleGui {
 
-    public static final Color CONTROL = new Color("control", 13208600);
+    public static final Color CONTROL = new Color("control", 13158600);
     public static final Function<Page, String> FUNCTION_LABEL_NAME = new Function<Page, String>() {
         @Override
         public String apply(Page page) {
@@ -267,13 +267,14 @@ public class ViewPagesGui extends SimpleGui {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onPageInformationEvent(PageInformationEvent event) {
         selectPage.setOptions(populate());
-        if (selectPage.getSelectedValue() != null && Objects.equals(selectPage.getSelectedValue().getIdentifier(), event.page.getIdentifier())) {
+
+        if (selectPage.getSelectedValue() != null && selectPage.getSelectedValue().getIdentifier().equals(event.page.getIdentifier())) {
             final String copyContents = textFieldContents.getText();
             selectPage.setSelectedOption(event.page);
             updateGui(selectPage.getSelectedValue());
             textFieldContents.setText(copyContents);
         } else {
-            selectPage.setSelectedOption(selectPage.selectFirst());
+            selectPage.setSelectedOption(event.page);
             updateGui(selectPage.getSelectedValue());
         }
     }
