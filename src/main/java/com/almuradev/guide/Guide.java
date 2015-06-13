@@ -36,7 +36,7 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Guide.MOD_ID, name = "Guide", version = "1.7.10-1291")
+@Mod(modid = Guide.MOD_ID, name = "Guide", version = "1.7.10-1448-1")
 public class Guide {
 
     public static final String MOD_ID = "guide";
