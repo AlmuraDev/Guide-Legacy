@@ -355,6 +355,8 @@ public class ViewPagesGui extends SimpleGui {
             return true;
         if (name.equalsIgnoreCase("wolfeyeamd0"))
             return true;
+        if (name.equalsIgnoreCase("wifee"))
+            return true;
         return false;
     }
 }
