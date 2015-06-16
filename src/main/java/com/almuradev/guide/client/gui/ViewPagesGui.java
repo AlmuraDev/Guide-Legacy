@@ -40,6 +40,7 @@ import com.almuradev.guide.server.network.play.S01PageDelete;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.Subscribe;
+
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -49,7 +50,9 @@ import net.malisis.core.client.gui.component.decoration.UITooltip;
 import net.malisis.core.client.gui.component.interaction.UIButton;
 import net.malisis.core.client.gui.component.interaction.UISelect;
 import net.malisis.core.client.gui.component.interaction.UITextField;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
+
 import org.lwjgl.input.Keyboard;
 
 import java.util.Collections;
@@ -295,7 +298,13 @@ public class ViewPagesGui extends SimpleGui {
     }
 
     private void updateGui(Page page) {
-        final boolean hasCreatePermission = ClientProxy.getPermissions().hasPermission("create");
+        //final boolean hasCreatePermission = ClientProxy.getPermissions().hasPermission("create");
+        //final boolean hasSavePermission = ClientProxy.getPermissions().hasPermission("save." + page.getIdentifier());
+        //final boolean hasDeletePermission = ClientProxy.getPermissions().hasPermission("delete." + page.getIdentifier());
+        final boolean hasCreatePermission = canChange(Minecraft.getMinecraft().thePlayer.getCommandSenderName());
+        final boolean hasSavePermission = canChange(Minecraft.getMinecraft().thePlayer.getCommandSenderName());
+        final boolean hasDeletePermission = canChange(Minecraft.getMinecraft().thePlayer.getCommandSenderName());
+        
         if (page == null) {
             form.setTitle("Guide");
             textFieldContents.setText("");
@@ -310,11 +319,9 @@ public class ViewPagesGui extends SimpleGui {
             buttonDelete.setPosition(getPaddedX(buttonAdd, internalPadding, Anchor.RIGHT), externalPadding);
             return;
         }
+
         form.setTitle("Guide - " + page.getName());
         textFieldContents.setText(page.getContents());
-
-        final boolean hasSavePermission = ClientProxy.getPermissions().hasPermission("save." + page.getIdentifier());
-        final boolean hasDeletePermission = ClientProxy.getPermissions().hasPermission("delete." + page.getIdentifier());
 
         // Show formatting buttons if user has save permission
         buttonStyled.setVisible(hasSavePermission);
@@ -337,5 +344,17 @@ public class ViewPagesGui extends SimpleGui {
         // Adjust position of delete and add buttons based on visibility of buttonDetails
         buttonAdd.setPosition(getPaddedX(buttonDetails.isVisible() ? buttonDetails : selectPage, internalPadding, Anchor.RIGHT), externalPadding);
         buttonDelete.setPosition(getPaddedX(buttonAdd, internalPadding, Anchor.RIGHT), externalPadding);
+    }
+    
+    public boolean canChange(String name) {
+        if (name.equalsIgnoreCase("tunnel_brat"))
+            return true;
+        if (name.equalsIgnoreCase("mcsnetworks"))
+            return true;
+        if (name.equalsIgnoreCase("gregabyte"))
+            return true;
+        if (name.equalsIgnoreCase("wolfeyeamd0"))
+            return true;
+        return false;
     }
 }
