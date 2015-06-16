@@ -85,26 +85,6 @@ public class ViewPagesGui extends SimpleGui {
         form.setColor(CONTROL.getGuiColorCode());
         form.setBackgroundAlpha(255);
 
-        buttonStyled = new UIButton(this, "Styled");
-        buttonStyled.setAnchor(Anchor.TOP | Anchor.LEFT);
-        buttonStyled.setPosition(externalPadding, externalPadding);
-        buttonStyled.setSize(0, 12);
-        buttonStyled.setName("form.guide.view.button.styled");
-        buttonStyled.setVisible(false);
-        buttonStyled.getFontRenderOptions().italic = true;
-        buttonStyled.getHoveredFontRendererOptions().italic = true;
-        buttonStyled.setTooltip(new UITooltip(this, "Styles the page text", 20));
-        buttonStyled.register(this);
-
-        buttonRaw = new UIButton(this, "</>");
-        buttonRaw.setAnchor(Anchor.TOP | Anchor.LEFT);
-        buttonRaw.setPosition(getPaddedX(buttonStyled, internalPadding), buttonStyled.getY());
-        buttonRaw.setSize(0, 12);
-        buttonRaw.setName("form.guide.view.button.raw");
-        buttonRaw.setVisible(false);
-        buttonRaw.setTooltip(new UITooltip(this, "Shows the raw text behind the styled page", 20));
-        buttonRaw.register(this);
-
         selectPage = new UISelect<>(this, 140, populate());
         selectPage.setAnchor(Anchor.TOP | Anchor.RIGHT);
         selectPage.setPosition(-externalPadding, externalPadding);
@@ -132,23 +112,23 @@ public class ViewPagesGui extends SimpleGui {
         buttonDetails.setTooltip(new UITooltip(this, "Details of this page", 20));
         buttonDetails.register(this);
 
-        buttonDelete = new UIButton(this, "-");
-        buttonDelete.setAnchor(Anchor.BOTTOM | Anchor.LEFT);
-        buttonDelete.setPosition(externalPadding, -externalPadding);
-        buttonDelete.setName("form.guide.view.button.delete");
-        buttonDelete.setVisible(false);
-        buttonDelete.getFontRenderOptions().color = Colors.RED.getGuiColorCode();
-        buttonDelete.setTooltip(new UITooltip(this, "Delete this page", 20));
-        buttonDelete.register(this);
-
         buttonAdd = new UIButton(this, "+");
-        buttonAdd.setAnchor(Anchor.BOTTOM | Anchor.LEFT);
-        buttonAdd.setPosition(buttonDelete.isVisible() ? getPaddedX(buttonDelete, internalPadding) : externalPadding, buttonDelete.getY());
+        buttonAdd.setAnchor(Anchor.TOP | Anchor.RIGHT);
+        buttonAdd.setPosition(getPaddedX(buttonDetails.isVisible() ? buttonDetails : selectPage, internalPadding, Anchor.RIGHT), externalPadding);
         buttonAdd.setName("form.guide.view.button.add");
         buttonAdd.setVisible(true);
         buttonAdd.getFontRenderOptions().color = Colors.GREEN.getGuiColorCode();
         buttonAdd.setTooltip(new UITooltip(this, "Add a new page", 20));
         buttonAdd.register(this);
+
+        buttonDelete = new UIButton(this, "-");
+        buttonDelete.setAnchor(Anchor.TOP | Anchor.RIGHT);
+        buttonDelete.setPosition(getPaddedX(buttonAdd, internalPadding, Anchor.RIGHT), externalPadding);
+        buttonDelete.setName("form.guide.view.button.delete");
+        buttonDelete.setVisible(false);
+        buttonDelete.getFontRenderOptions().color = Colors.RED.getGuiColorCode();
+        buttonDelete.setTooltip(new UITooltip(this, "Delete this page", 20));
+        buttonDelete.register(this);
 
         buttonClose = new UIButton(this, "Close");
         buttonClose.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
@@ -166,7 +146,7 @@ public class ViewPagesGui extends SimpleGui {
         buttonSave.register(this);
 
         textFieldContents = new UITextField(this, true);
-        textFieldContents.setPosition(externalPadding, getPaddedY(buttonStyled, internalPadding));
+        textFieldContents.setPosition(externalPadding, getPaddedY(selectPage, internalPadding));
         textFieldContents.setSize(form.getWidth() - (externalPadding * internalPadding), form.getContentHeight() - textFieldContents.getY() -
                 externalPadding - (buttonClose.getHeight() * internalPadding));
         textFieldContents.setOptions(Colors.GRAY.getGuiColorCode(), CONTROL.getGuiColorCode(), Colors.BLACK.getGuiColorCode());
@@ -174,6 +154,26 @@ public class ViewPagesGui extends SimpleGui {
         textFieldContents.getFontRenderOptions().shadow = false;
         textFieldContents.getScrollbar().setAutoHide(true);
         textFieldContents.setEditable(false);
+
+        buttonStyled = new UIButton(this, "Styled");
+        buttonStyled.setAnchor(Anchor.BOTTOM | Anchor.LEFT);
+        buttonStyled.setPosition(externalPadding, -externalPadding);
+        buttonStyled.setSize(0, 12);
+        buttonStyled.setName("form.guide.view.button.styled");
+        buttonStyled.setVisible(false);
+        buttonStyled.getFontRenderOptions().italic = true;
+        buttonStyled.getHoveredFontRendererOptions().italic = true;
+        buttonStyled.setTooltip(new UITooltip(this, "Styles the page text", 20));
+        buttonStyled.register(this);
+
+        buttonRaw = new UIButton(this, "</>");
+        buttonRaw.setAnchor(Anchor.BOTTOM | Anchor.LEFT);
+        buttonRaw.setPosition(getPaddedX(buttonStyled, internalPadding), buttonStyled.getY());
+        buttonRaw.setSize(0, 12);
+        buttonRaw.setName("form.guide.view.button.raw");
+        buttonRaw.setVisible(false);
+        buttonRaw.setTooltip(new UITooltip(this, "Shows the raw text behind the styled page", 20));
+        buttonRaw.register(this);
 
         form.getContentContainer().add(buttonStyled, buttonRaw, selectPage, textFieldContents, buttonDetails, buttonDelete, buttonAdd,
                 buttonSave, buttonClose);
@@ -303,10 +303,11 @@ public class ViewPagesGui extends SimpleGui {
             buttonStyled.setVisible(false);
             buttonRaw.setVisible(false);
             buttonDelete.setVisible(false);
-            buttonAdd.setVisible(hasCreatePermission);
-            buttonAdd.setPosition(buttonDelete.isVisible() ? getPaddedX(buttonDelete, internalPadding) : externalPadding, buttonDelete.getY());
-            buttonSave.setVisible(false);
             buttonDetails.setVisible(false);
+            buttonSave.setVisible(false);
+            buttonAdd.setVisible(hasCreatePermission);
+            buttonAdd.setPosition(getPaddedX(buttonDetails.isVisible() ? buttonDetails : selectPage, internalPadding, Anchor.RIGHT), externalPadding);
+            buttonDelete.setPosition(getPaddedX(buttonAdd, internalPadding, Anchor.RIGHT), externalPadding);
             return;
         }
         form.setTitle("Guide - " + page.getName());
@@ -326,12 +327,15 @@ public class ViewPagesGui extends SimpleGui {
 
         // Show add ('+') button when player has add permission
         buttonAdd.setVisible(hasCreatePermission);
-        buttonAdd.setPosition(buttonDelete.isVisible() ? getPaddedX(buttonDelete, internalPadding) : externalPadding, buttonDelete.getY());
 
         // Show save button when player has save permission
         buttonSave.setVisible(hasSavePermission);
 
         // Show the details button
         buttonDetails.setVisible(true);
+
+        // Adjust position of delete and add buttons based on visibility of buttonDetails
+        buttonAdd.setPosition(getPaddedX(buttonDetails.isVisible() ? buttonDetails : selectPage, internalPadding, Anchor.RIGHT), externalPadding);
+        buttonDelete.setPosition(getPaddedX(buttonAdd, internalPadding, Anchor.RIGHT), externalPadding);
     }
 }
