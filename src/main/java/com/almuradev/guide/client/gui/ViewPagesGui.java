@@ -91,7 +91,7 @@ public class ViewPagesGui extends SimpleGui {
         selectPage = new UISelect<>(this, 140, populate());
         selectPage.setAnchor(Anchor.TOP | Anchor.RIGHT);
         selectPage.setPosition(-externalPadding, externalPadding);
-        selectPage.setSize(130, 15);
+        selectPage.setSize(160, 15);
         selectPage.setName("form.guide.view.select.page");
         selectPage.setLabelFunction(FUNCTION_LABEL_NAME);
         selectPage.setColors(selectPage.getBgColor(), Colors.DARK_GRAY.getGuiColorCode());
@@ -152,7 +152,8 @@ public class ViewPagesGui extends SimpleGui {
         textFieldContents.setPosition(externalPadding, getPaddedY(selectPage, internalPadding));
         textFieldContents.setSize(form.getWidth() - (externalPadding * internalPadding), form.getContentHeight() - textFieldContents.getY() -
                 externalPadding - (buttonClose.getHeight() * internalPadding));
-        textFieldContents.setOptions(Colors.GRAY.getGuiColorCode(), CONTROL.getGuiColorCode(), Colors.BLACK.getGuiColorCode());
+        textFieldContents.setOptions(Colors.DARK_GRAY.getGuiColorCode(), CONTROL.getGuiColorCode(), Colors.BLACK.getGuiColorCode());
+        textFieldContents.getFontRenderOptions().fontScale = 0.8f;
         textFieldContents.getFontRenderOptions().color = Colors.WHITE.getGuiColorCode();
         textFieldContents.getFontRenderOptions().shadow = false;
         textFieldContents.getScrollbar().setAutoHide(true);
