@@ -112,6 +112,8 @@ public class ViewPagesGui extends SimpleGui {
         buttonDetails.setVisible(false);
         buttonDetails.getFontRenderOptions().color = Colors.GOLD.getGuiColorCode();
         buttonDetails.getFontRenderOptions().shadow = false;
+        buttonDetails.getHoveredFontRendererOptions().color = Colors.GOLD.getGuiColorCode();
+        buttonDetails.getHoveredFontRendererOptions().shadow = false;
         buttonDetails.setTooltip(new UITooltip(this, "Details of this page", 20));
         buttonDetails.register(this);
 
@@ -121,6 +123,8 @@ public class ViewPagesGui extends SimpleGui {
         buttonAdd.setName("form.guide.view.button.add");
         buttonAdd.setVisible(true);
         buttonAdd.getFontRenderOptions().color = Colors.GREEN.getGuiColorCode();
+        buttonAdd.getFontRenderOptions().shadow = false;
+        buttonAdd.getHoveredFontRendererOptions().shadow = false;
         buttonAdd.setTooltip(new UITooltip(this, "Add a new page", 20));
         buttonAdd.register(this);
 
@@ -130,6 +134,8 @@ public class ViewPagesGui extends SimpleGui {
         buttonDelete.setName("form.guide.view.button.delete");
         buttonDelete.setVisible(false);
         buttonDelete.getFontRenderOptions().color = Colors.RED.getGuiColorCode();
+        buttonDelete.getFontRenderOptions().shadow = false;
+        buttonDelete.getHoveredFontRendererOptions().shadow = false;
         buttonDelete.setTooltip(new UITooltip(this, "Delete this page", 20));
         buttonDelete.register(this);
 
@@ -138,6 +144,8 @@ public class ViewPagesGui extends SimpleGui {
         buttonClose.setPosition(-externalPadding, -externalPadding);
         buttonClose.setSize(0, 15);
         buttonClose.setName("form.guide.view.button.close");
+        buttonClose.getFontRenderOptions().shadow = false;
+        buttonClose.getHoveredFontRendererOptions().shadow = false;
         buttonClose.register(this);
 
         buttonSave = new UIButton(this, "Save");
@@ -146,6 +154,8 @@ public class ViewPagesGui extends SimpleGui {
         buttonSave.setSize(0, 15);
         buttonSave.setName("form.guide.view.button.save");
         buttonSave.setVisible(false);
+        buttonSave.getFontRenderOptions().shadow = false;
+        buttonSave.getHoveredFontRendererOptions().shadow = false;
         buttonSave.register(this);
 
         textFieldContents = new UITextField(this, true);
@@ -166,7 +176,9 @@ public class ViewPagesGui extends SimpleGui {
         buttonStyled.setName("form.guide.view.button.styled");
         buttonStyled.setVisible(false);
         buttonStyled.getFontRenderOptions().italic = true;
+        buttonStyled.getFontRenderOptions().shadow = false;
         buttonStyled.getHoveredFontRendererOptions().italic = true;
+        buttonStyled.getHoveredFontRendererOptions().shadow = false;
         buttonStyled.setTooltip(new UITooltip(this, "Styles the page text", 20));
         buttonStyled.register(this);
 
@@ -176,6 +188,8 @@ public class ViewPagesGui extends SimpleGui {
         buttonRaw.setSize(0, 12);
         buttonRaw.setName("form.guide.view.button.raw");
         buttonRaw.setVisible(false);
+        buttonRaw.getFontRenderOptions().shadow = false;
+        buttonRaw.getHoveredFontRendererOptions().shadow = false;
         buttonRaw.setTooltip(new UITooltip(this, "Shows the raw text behind the styled page", 20));
         buttonRaw.register(this);
 

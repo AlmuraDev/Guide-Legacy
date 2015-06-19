@@ -75,6 +75,7 @@ public class CreatePageGui extends SimpleGui {
         textFieldFileName.setSize(form.getWidth() - (padding * 2), 0);
         textFieldFileName.setTooltip(new UITooltip(this, "File must not exist already.", 20));
         textFieldFileName.setFocused(true);
+        textFieldFileName.getFontRenderOptions().shadow = false;
 
         labelIndex = new UILabel(this, "Index");
         labelIndex.setAnchor(Anchor.TOP | Anchor.LEFT);
@@ -87,6 +88,7 @@ public class CreatePageGui extends SimpleGui {
         textFieldIndex.setSize(form.getWidth() - 8, 0);
         textFieldIndex.setTooltip(new UITooltip(this, "Value must be equal to or greater than 0.", 20));
         textFieldIndex.setValidator(new IntegerFilterPredicate());
+        textFieldIndex.getFontRenderOptions().shadow = false;
 
         labelTitle = new UILabel(this, "Title");
         labelTitle.setAnchor(Anchor.TOP | Anchor.LEFT);
@@ -99,12 +101,15 @@ public class CreatePageGui extends SimpleGui {
         textFieldTitle.setSize(form.getWidth() - (padding * 2), 0);
         textFieldTitle.setTooltip(new UITooltip(this, "Name must not be greater than 100 characters.", 20));
         textFieldTitle.setValidator(new StringLengthPredicate(1, 100));
+        textFieldTitle.getFontRenderOptions().shadow = false;
 
         buttonCancel = new UIButton(this, "Cancel");
         buttonCancel.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
         buttonCancel.setPosition(-padding, -padding);
         buttonCancel.setSize(0, 15);
         buttonCancel.setName("form.guide.create.button.cancel");
+        buttonCancel.getFontRenderOptions().shadow = false;
+        buttonCancel.getHoveredFontRendererOptions().shadow = false;
         buttonCancel.register(this);
 
         buttonSave = new UIButton(this, "Save");
@@ -112,6 +117,8 @@ public class CreatePageGui extends SimpleGui {
         buttonSave.setPosition(getPaddedX(buttonCancel, 2, Anchor.RIGHT), -padding);
         buttonSave.setSize(0, 10);
         buttonSave.setName("form.guide.create.button.save");
+        buttonSave.getFontRenderOptions().shadow = false;
+        buttonSave.getHoveredFontRendererOptions().shadow = false;
         buttonSave.register(this);
 
         form.getContentContainer().add(labelFileName, textFieldFileName, labelIndex, textFieldIndex, labelTitle,

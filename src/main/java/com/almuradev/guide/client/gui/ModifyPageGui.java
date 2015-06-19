@@ -82,6 +82,7 @@ public class ModifyPageGui extends SimpleGui {
         textFieldIndex.setPosition(padding, getPaddedY(labelIndex, textFieldTopPadding));
         textFieldIndex.setSize(form.getWidth() - 8, 0);
         textFieldIndex.setVisible(hasPermission);
+        textFieldIndex.getFontRenderOptions().shadow = false;
         if (hasPermission) {
             textFieldIndex.setTooltip(new UITooltip(this, "Value must be equal to or greater than 0.", 20));
         }
@@ -97,6 +98,7 @@ public class ModifyPageGui extends SimpleGui {
         textFieldTitle.setAnchor(Anchor.TOP | Anchor.LEFT);
         textFieldTitle.setPosition(padding, getPaddedY(labelTitle, textFieldTopPadding));
         textFieldTitle.setSize(form.getWidth() - (padding * 2), 0);
+        textFieldTitle.getFontRenderOptions().shadow = false;
         if (hasPermission) {
             textFieldTitle.setTooltip(new UITooltip(this, "Name must not be greater than 100 characters.", 20));
         }
@@ -113,6 +115,7 @@ public class ModifyPageGui extends SimpleGui {
         textFieldCreated.setPosition(padding, getPaddedY(labelCreated, textFieldTopPadding));
         textFieldCreated.setSize(form.getWidth() - (padding * 2), 0);
         textFieldCreated.setEditable(false);
+        textFieldCreated.getFontRenderOptions().shadow = false;
 
         labelAuthor = new UILabel(this, "Author");
         labelAuthor.setAnchor(Anchor.TOP | Anchor.LEFT);
@@ -124,6 +127,7 @@ public class ModifyPageGui extends SimpleGui {
         textFieldAuthor.setPosition(padding, getPaddedY(labelAuthor, textFieldTopPadding));
         textFieldAuthor.setSize(form.getWidth() - (padding * 2), 0);
         textFieldAuthor.setEditable(false);
+        textFieldAuthor.getFontRenderOptions().shadow = false;
 
         labelLastModified = new UILabel(this, "Last Modified");
         labelLastModified.setAnchor(Anchor.TOP | Anchor.LEFT);
@@ -135,6 +139,7 @@ public class ModifyPageGui extends SimpleGui {
         textFieldLastModified.setPosition(padding, getPaddedY(labelLastModified, textFieldTopPadding));
         textFieldLastModified.setEditable(false);
         textFieldLastModified.setSize(form.getWidth() - (padding * 2), 0);
+        textFieldLastModified.getFontRenderOptions().shadow = false;
 
         labelLastContributor = new UILabel(this, "Last Contributor");
         labelLastContributor.setAnchor(Anchor.TOP | Anchor.LEFT);
@@ -146,12 +151,15 @@ public class ModifyPageGui extends SimpleGui {
         textFieldLastContributor.setPosition(padding, getPaddedY(labelLastContributor, textFieldTopPadding));
         textFieldLastContributor.setSize(form.getWidth() - (padding * 2), 0);
         textFieldLastContributor.setEditable(false);
+        textFieldLastContributor.getFontRenderOptions().shadow = false;
 
         buttonClose = new UIButton(this, "Close");
         buttonClose.setAnchor(Anchor.BOTTOM | Anchor.RIGHT);
         buttonClose.setPosition(-padding, -padding);
         buttonClose.setSize(0, 15);
         buttonClose.setName("form.guide.modify.button.close");
+        buttonClose.getFontRenderOptions().shadow = false;
+        buttonClose.getHoveredFontRendererOptions().shadow = false;
         buttonClose.register(this);
 
         buttonSave = new UIButton(this, "Save");
@@ -160,6 +168,8 @@ public class ModifyPageGui extends SimpleGui {
         buttonSave.setSize(0, 10);
         buttonSave.setName("form.guide.modify.button.save");
         buttonSave.setVisible(hasPermission);
+        buttonSave.getFontRenderOptions().shadow = false;
+        buttonSave.getHoveredFontRendererOptions().shadow = false;
         buttonSave.register(this);
 
         if (labelIndex.isVisible()) {
