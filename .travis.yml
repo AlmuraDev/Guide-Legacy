@@ -1,34 +1,16 @@
-# Source language and JDK version to use
 language: java
 jdk: oraclejdk7
-
-# Branch whitelist
 branches:
   only:
-    - master
-
-# Prepare the workspace for a CI build and then run the build
-install: ./gradlew setupCIWorkspace
-script: ./gradlew build
-
-# Perform steps after compilation/test success
+  - master
+install: "./gradlew setupCIWorkspace"
+script: "./gradlew build"
 after_success:
-  # Check if commit s not a pull request, if git repo is official, and if branch is master. If checks pass, add libs and deploy artifacts to Maven repository.
-  # - "[[ $TRAVIS_PULL_REQUEST == false ]] && [[ $TRAVIS_REPO_SLUG == AlmuraDev/Guide ]] && [[ $TRAVIS_BRANCH == master ]] && ./gradlew uploadArchives"
-
-# Notification services
+  - "[[ $TRAVIS_PULL_REQUEST == false ]] && [[ $TRAVIS_REPO_SLUG == AlmuraDev/Guide ]] && gradle :uploadArchives"
 notifications:
-  # Disable build status email notifications, until the issue with forks is fixed
   email: false
-  webhooks:
-    # Send build information and status to Notifico
-    - http://n.tkte.ch/h/3885/ykKvVXh4dNvtAWNfnF7b0ea4
-
-# Environmental system variables
 env:
   global:
-    # Make the log output cleaner
-    - TERM=dumb
-    # Secure environment variables
-    # - secure: ""
-    # - secure: ""
+  - TERM=dumb
+  - secure: Nq/96KKkz/M7YISYzNNtJLKivztI0uBahp82xKxgLbK4l+K2M7g8iH9gR+9DEISLjOBlsARqo3Lp4D3DV/H1FwvPbECqMOPuIVJ0X4PJOR9s1WDTIcgOT13HdJ67U/1o3cb5UZHwuM12hw9RGeAVKSKSZcJ0HfToIGSkv07xdbc=
+  - secure: mcHjq3/+14aHheE7AUIjOI2weAToRAsFrffVV3/4ItHilr6CgD1xLkjTTE44pzrGemSdF0zYYTG0jsi3Mx5jjb73bH+BAGxpNu7MB0V6zdnXEL6SrWAbf2YO7wWi4/1yaSWFreZbZh2d5Ua2k+pcRoYz+NgSkY+EoJ8KY/fe/Wo=
