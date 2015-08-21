@@ -35,7 +35,7 @@ ext.organization = 'AlmuraDev'
 ext.minecraftVersion = '1.7.10'
 ext.forgeVersion = '10.13.4.1448'
 ext.guideVersion = '1'
-version = minecraftVersion + '-' + forgeVersion.substring(forgeVersion.size() - 4) + '-' + ext.guideVersion
+version = minecraftVersion + '-' + forgeVersion.substring(forgeVersion.size() - 4) + '-' + ext.guideVersion + '-SNAPSHOT'
 
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
