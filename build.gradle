@@ -146,7 +146,7 @@ uploadArchives {
             ext.sonatypeUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
 
             signing {
-                required {gradle.taskGraph.hasTask("uploadArchives")}
+                required {!version.endsWith('-SNAPSHOT') && gradle.taskGraph.hasTask("uploadArchives")}
 
                 sign configurations.archives
 
