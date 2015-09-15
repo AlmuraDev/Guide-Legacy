@@ -239,7 +239,11 @@ public class ViewPagesGui extends SimpleGui {
     @Override
     public void update(int mouseX, int mouseY, float partialTick) {
         if (!(Minecraft.getMinecraft().currentScreen instanceof ViewPagesGui)) {
-            this.close();
+            if (!(Minecraft.getMinecraft().currentScreen instanceof CreatePageGui)) {
+                if (!(Minecraft.getMinecraft().currentScreen instanceof ModifyPageGui)) {
+                    this.close();
+                }
+            }
         }
     }
 
