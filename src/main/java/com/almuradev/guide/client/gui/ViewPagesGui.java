@@ -102,6 +102,7 @@ public class ViewPagesGui extends SimpleGui {
         selectPage.getSelectedFontRendererOptions().color = Colors.YELLOW.getGuiColorCode();
         selectPage.getSelectedFontRendererOptions().shadow = false;
         selectPage.getSelectedFontRendererOptions().bold = true;
+        selectPage.maxDisplayedOptions(15);
         selectPage.register(this);
 
         buttonDetails = new UIButton(this, "?");
@@ -232,6 +233,13 @@ public class ViewPagesGui extends SimpleGui {
             }
         }
     }
+    
+    @Override
+    public void update(int mouseX, int mouseY, float partialTick) {
+        if (Minecraft.getMinecraft().thePlayer.getHealth() <= 0) {
+           this.close();
+        }
+    }
 
     @Subscribe
     public void onUIButtonClickEvent(UIButton.ClickEvent event) {
@@ -341,8 +349,7 @@ public class ViewPagesGui extends SimpleGui {
         // Show formatting buttons if user has save permission
         buttonStyled.setVisible(hasSavePermission);
         buttonRaw.setVisible(hasSavePermission);
-
-        textFieldContents.setEditable(true);
+        textFieldContents.setEditable(hasSavePermission);
 
         // Show delete ('-') button when player has delete permission
         buttonDelete.setVisible(hasDeletePermission);
