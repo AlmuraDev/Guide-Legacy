@@ -40,7 +40,6 @@ import com.almuradev.guide.server.network.play.S01PageDelete;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.Subscribe;
-
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -52,7 +51,6 @@ import net.malisis.core.client.gui.component.interaction.UISelect;
 import net.malisis.core.client.gui.component.interaction.UITextField;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
-
 import org.lwjgl.input.Keyboard;
 
 import java.util.Collections;
@@ -212,6 +210,10 @@ public class ViewPagesGui extends SimpleGui {
     protected void keyTyped(char keyChar, int keyCode) {
         super.keyTyped(keyChar, keyCode);
 
+        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+            new ConfirmGui("Be sure you read the Membership and Rules guide.", "Close anyways?", "Guide", false).display();
+        }
+        
         if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_F5)) {
             Page selected = null;
 
@@ -275,7 +277,7 @@ public class ViewPagesGui extends SimpleGui {
     }
 
     @Subscribe
-    public void onUISelectEvent(UISelect.SelectEvent event) {
+    public void onUISelectEvent(@SuppressWarnings("rawtypes") UISelect.SelectEvent event) {
         if (event.getNewValue() == null) {
             updateGui(null);
             return;
@@ -345,6 +347,7 @@ public class ViewPagesGui extends SimpleGui {
 
         form.setTitle("Guide - " + page.getName());
         textFieldContents.setText(page.getContents());
+        Keyboard.enableRepeatEvents(true);
 
         // Show formatting buttons if user has save permission
         buttonStyled.setVisible(hasSavePermission);
