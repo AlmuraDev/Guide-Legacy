@@ -236,8 +236,8 @@ public class ViewPagesGui extends SimpleGui {
     
     @Override
     public void update(int mouseX, int mouseY, float partialTick) {
-        if (Minecraft.getMinecraft().thePlayer.getHealth() <= 0) {
-           this.close();
+        if (!(Minecraft.getMinecraft().currentScreen instanceof ViewPagesGui)) {
+            this.close();
         }
     }
 
